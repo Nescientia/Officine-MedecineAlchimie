@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Officine - Gestion RP</title>
+<style>
+:root{
+--bg:#0b0907; --pan:#17120e; --pan2:#1f1811; --line:#3a2d20; --line2:#4d3c2a;
+--tx:#efe4d4; --tx2:#a8977f; --or:#e8821e; --or2:#ffa447;
+--vert:#5aa457; --viol:#9a6fd0; --bleu:#4f8fc0; --rouge:#c8553d; --jaune:#d4a72c; --gris:#7a6b58; --cyan:#4fb3a8;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--tx);font:13px/1.45 "Segoe UI",system-ui,sans-serif;display:flex;height:100vh;overflow:hidden}
+::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:5px}::-webkit-scrollbar-thumb:hover{background:var(--line2)}
+
+nav{width:186px;flex-shrink:0;background:var(--pan);border-right:1px solid var(--line);display:flex;flex-direction:column}
+nav h1{font-size:14px;padding:14px 12px 4px;color:var(--or);letter-spacing:.5px}
+nav .sub{font-size:10px;color:var(--tx2);padding:0 12px 12px;border-bottom:1px solid var(--line)}
+nav .nx{flex:1;overflow-y:auto;padding:6px 0}
+nav a{display:flex;align-items:center;gap:8px;padding:7px 12px;color:var(--tx2);cursor:pointer;font-size:12.5px;border-left:2px solid transparent}
+nav a:hover{background:var(--pan2);color:var(--tx)}
+nav a.on{background:var(--pan2);color:var(--or2);border-left-color:var(--or)}
+nav a i{font-style:normal;width:16px;text-align:center;font-size:13px}
+nav a b{margin-left:auto;background:var(--or);color:#2a1a08;font-size:9.5px;padding:0 5px;border-radius:8px;font-weight:700}
+.navfoot{border-top:1px solid var(--line);padding:7px 12px;font-size:10px;color:var(--gris);display:flex;justify-content:space-between;align-items:center}
+
+main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.top{height:44px;flex-shrink:0;border-bottom:1px solid var(--line);background:var(--pan);display:flex;align-items:center;gap:10px;padding:0 14px}
+.top h2{font-size:15px;font-weight:600}
+.top .sp{flex:1}
+.wrap{flex:1;overflow-y:auto;padding:14px}
+
+.pan{background:var(--pan);border:1px solid var(--line);border-radius:6px}
+.pad{padding:12px}
+.ph{padding:8px 12px;border-bottom:1px solid var(--line);font-weight:600;font-size:12.5px;display:flex;align-items:center;gap:8px}
+.ph .sp{flex:1}
+.g{display:grid;gap:10px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(165px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(125px,1fr))}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.muted{color:var(--tx2)}.small{font-size:11px}.tiny{font-size:10px}
+.right{text-align:right}.mono{font-variant-numeric:tabular-nums}
+.sep{height:1px;background:var(--line);margin:10px 0}
+
+button,.btn{background:var(--pan2);color:var(--tx);border:1px solid var(--line2);border-radius:5px;padding:5px 11px;font:inherit;font-size:12px;cursor:pointer;white-space:nowrap}
+button:hover{background:#2b2118;border-color:var(--or)}
+button:disabled{opacity:.35;cursor:not-allowed}
+.b-or{background:var(--or);border-color:var(--or);color:#2a1a08;font-weight:600}.b-or:hover{background:var(--or2);border-color:var(--or2)}
+.b-v{background:#1e3a1d;border-color:#3d6b3b;color:#a9d6a6}.b-v:hover{background:#264924;border-color:var(--vert)}
+.b-r{background:#3a1c16;border-color:#6b342a;color:#e0a99c}.b-r:hover{background:#4a241c;border-color:var(--rouge)}
+.b-s{padding:2px 7px;font-size:11px}
+.b-i{padding:3px 7px;font-size:12px;line-height:1}
+
+input,select,textarea{background:#100c08;color:var(--tx);border:1px solid var(--line);border-radius:5px;padding:6px 8px;font:inherit;font-size:12.5px;width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--or)}
+input[readonly]{background:#0a0806;color:var(--tx2)}
+textarea{resize:vertical;line-height:1.5}
+label{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--tx2);margin-bottom:3px;font-weight:600}
+.f{margin-bottom:9px}
+.chk{display:flex;align-items:center;gap:7px;cursor:pointer;font-size:12px}
+.chk input{width:15px;height:15px;flex:0 0 auto;accent-color:var(--or)}
+
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:6px 8px;color:var(--tx2);font-size:10px;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:5px 8px;border-bottom:1px solid #241c14;vertical-align:middle}
+tbody tr:hover{background:#1c1610}
+tr.clk{cursor:pointer}
+.empty{padding:26px;text-align:center;color:var(--gris);font-size:12px}
+
+.tag{display:inline-block;padding:1px 7px;border-radius:9px;font-size:10px;font-weight:600;border:1px solid;white-space:nowrap}
+.t-ing{color:var(--vert);border-color:#3d6b3b;background:#16240f}
+.t-pot{color:var(--viol);border-color:#5b4080;background:#1d1529}
+.t-breuv{color:var(--cyan);border-color:#2f6b64;background:#0e2321}
+.t-nour{color:var(--jaune);border-color:#6d5518;background:#241d0d}
+.t-comp{color:var(--bleu);border-color:#2f5c7d;background:#0f1d28}
+.t-mat{color:var(--rouge);border-color:#6b342a;background:#26120e}
+.t-autre{color:var(--gris);border-color:#4a4034;background:#1a1712}
+.t-ok{color:var(--vert);border-color:#3d6b3b;background:#16240f}
+.t-w{color:var(--jaune);border-color:#6d5518;background:#241d0d}
+.t-d{color:var(--rouge);border-color:#6b342a;background:#26120e}
+.t-n{color:var(--tx2);border-color:var(--line2);background:var(--pan2)}
+.t-b{color:var(--bleu);border-color:#2f5c7d;background:#0f1d28}
+
+.kpi{background:var(--pan);border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+.kpi .k{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--tx2);font-weight:600}
+.kpi .v{font-size:21px;font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums}
+.kpi .d{font-size:10.5px;color:var(--gris);margin-top:1px}
+
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.66);z-index:60;display:none}
+.ov.on{display:block}
+.dr{position:fixed;top:0;right:0;bottom:0;width:490px;max-width:94vw;background:var(--pan);border-left:1px solid var(--line2);z-index:61;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .17s ease}
+.dr.on{transform:none}
+.dr .dh{padding:11px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;flex-shrink:0}
+.dr .dh h3{font-size:14px;flex:1}
+.dr .db{flex:1;overflow-y:auto;padding:14px}
+.dr .df{padding:10px 14px;border-top:1px solid var(--line);display:flex;gap:8px;flex-shrink:0;background:var(--pan2)}
+.md{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:840px;max-width:95vw;max-height:90vh;background:var(--pan);border:1px solid var(--line2);border-radius:8px;z-index:61;display:none;flex-direction:column}
+.md.on{display:flex}
+.md .dh{padding:11px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
+.md .dh h3{font-size:14px;flex:1}
+.md .db{flex:1;overflow-y:auto;padding:14px}
+.md .df{padding:10px 14px;border-top:1px solid var(--line);display:flex;gap:8px;background:var(--pan2)}
+
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--pan2);border:1px solid var(--or);color:var(--tx);padding:9px 16px;border-radius:6px;z-index:90;font-size:12.5px;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+
+.lines{display:grid;grid-template-columns:1fr 66px 86px 66px 84px 30px;gap:6px;align-items:center}
+.lines .hd{font-size:9.5px;text-transform:uppercase;color:var(--tx2);font-weight:600;letter-spacing:.3px}
+.bar{height:5px;background:#241c14;border-radius:3px;overflow:hidden;margin-top:4px}
+.bar i{display:block;height:100%;background:var(--or)}
+
+.fiche{background:var(--pan2);border:1px solid var(--line);border-radius:5px;padding:9px;margin-bottom:8px}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:7px;margin-top:7px}
+.kv div span{display:block;font-size:9.5px;text-transform:uppercase;letter-spacing:.3px;color:var(--tx2);font-weight:600}
+.kv div b{font-size:14px;font-variant-numeric:tabular-nums}
+.tl{border-left:2px solid var(--line2);margin-left:6px;padding-left:12px}
+.tl .it{position:relative;padding-bottom:12px}
+.tl .it:before{content:'';position:absolute;left:-17px;top:4px;width:8px;height:8px;border-radius:50%;background:var(--or);border:2px solid var(--pan)}
+
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:12px;flex-wrap:wrap}
+.tabs span{padding:6px 12px;cursor:pointer;font-size:12px;color:var(--tx2);border-bottom:2px solid transparent;font-weight:600}
+.tabs span:hover{color:var(--tx)}
+.tabs span.on{color:var(--or2);border-bottom-color:var(--or)}
+
+.pxc{display:flex;gap:3px;align-items:center;justify-content:flex-end;flex-wrap:nowrap}
+.pxc input{width:64px;text-align:right;padding:3px 5px}
+
+#print{display:none}
+@media print{
+ body>*{display:none!important}
+ #print{display:block!important;position:static;background:#fff;color:#000;padding:26px;font-family:Georgia,serif}
+ #print h1{font-size:21px;border-bottom:2px solid #000;padding-bottom:7px;margin-bottom:12px}
+ #print table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+ #print th,#print td{border:1px solid #666;padding:5px 7px;text-align:left}
+ #print .tot{text-align:right;font-size:16px;font-weight:bold;margin-top:12px}
+ #print .mt{font-size:12px;color:#444}
+}
+/* ═══════════ AUTHENTIFICATION SUPABASE / DISCORD ═══════════ */
+body.auth-lock nav,body.auth-lock main{visibility:hidden}
+.auth-gate{position:fixed;inset:0;z-index:200;background:radial-gradient(circle at 50% 35%,#1f1811 0,#0b0907 55%);display:flex;align-items:center;justify-content:center;padding:24px}
+.auth-gate.off{display:none}
+.auth-card{width:430px;max-width:94vw;background:var(--pan);border:1px solid var(--line2);border-radius:10px;padding:24px;box-shadow:0 18px 60px rgba(0,0,0,.45)}
+.auth-card h1{color:var(--or2);font-size:20px;margin-bottom:6px}
+.auth-card p{color:var(--tx2);margin:7px 0 14px}
+.auth-logo{font-size:30px;margin-bottom:8px}
+.auth-status{padding:10px 12px;border:1px solid var(--line);background:var(--pan2);border-radius:6px;margin:12px 0;font-size:12px}
+.auth-status.wait{border-color:var(--jaune);color:#e8cf7b}
+.auth-status.err{border-color:var(--rouge);color:#e0a99c}
+.auth-user{display:flex;align-items:center;gap:8px;color:var(--tx2);font-size:11px}
+.auth-user img{width:24px;height:24px;border-radius:50%;object-fit:cover;border:1px solid var(--line2)}
+.auth-role{color:var(--or2);font-size:10px}
+
+</style>
+</head>
+<body class="auth-lock">
+
+<div class="auth-gate" id="authGate">
+  <div class="auth-card">
+    <div class="auth-logo">⚗</div>
+    <h1>Officine Nescientia</h1>
+    <p id="authText">Vérification de votre accès...</p>
+    <div id="authState" class="auth-status">Connexion à Supabase en cours.</div>
+    <div class="row" id="authActions"></div>
+  </div>
+</div>
+
+<nav>
+  <h1>⚗ OFFICINE</h1>
+  <div class="sub">Médecine &amp; Alchimie</div>
+  <div class="nx" id="nav"></div>
+  <div class="navfoot"><span id="saveSt">enregistré</span><span id="cartBtn" style="cursor:pointer;color:var(--or2)">🧺 0</span></div>
+</nav>
+
+<main>
+  <div class="top"><h2 id="ttl">Tableau de bord</h2><div class="sp"></div><div id="authBar" class="auth-user"></div><div id="topAct" class="row"></div></div>
+  <div class="wrap" id="view"></div>
+</main>
+
+<div class="ov" id="ov"></div>
+<div class="dr" id="dr"><div class="dh"><h3 id="drT"></h3><button class="b-i" onclick="closeD()">✕</button></div><div class="db" id="drB"></div><div class="df" id="drF"></div></div>
+<div class="md" id="md"><div class="dh"><h3 id="mdT"></h3><button class="b-i" onclick="closeM()">✕</button></div><div class="db" id="mdB"></div><div class="df" id="mdF"></div></div>
+<div class="toast" id="toast"></div>
+<div id="print"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ═══════════ 0. AUTHENTIFICATION SUPABASE / DISCORD ═══════════ */
+const SUPABASE_URL='https://iwzluljlgidtgjeujpdd.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_WRsUV18uUiM9FMylSNXKHw_-qOE43jv';
+const SITE_URL='https://nescientia.github.io/Officine-MedecineAlchimie/';
+const SB=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{
+  auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
+});
+let CURRENT_SESSION=null,CURRENT_PROFILE=null;
+
+function authGate(title,msg,kind,actions){
+  const gate=document.getElementById('authGate');
+  document.getElementById('authText').textContent=title||'';
+  const st=document.getElementById('authState');
+  st.className='auth-status'+(kind?' '+kind:'');
+  st.innerHTML=msg||'';
+  document.getElementById('authActions').innerHTML=actions||'';
+  gate.classList.remove('off');
+  document.body.classList.add('auth-lock');
+}
+function authOpenApp(){
+  document.getElementById('authGate').classList.add('off');
+  document.body.classList.remove('auth-lock');
+  const p=CURRENT_PROFILE||{};
+  const avatar=p.avatar_url?'<img src="'+esc(p.avatar_url)+'" alt="">':'';
+  document.getElementById('authBar').innerHTML=avatar+'<span><b>'+esc(p.nom_affiche||'Utilisateur')+'</b><br><span class="auth-role">'+esc(p.role||'')+'</span></span><button class="b-s" onclick="signOutDiscord()">Déconnexion</button>';
+}
+async function signInDiscord(){
+  authGate('Connexion Discord','Redirection vers Discord...','','');
+  const {error}=await SB.auth.signInWithOAuth({provider:'discord',options:{redirectTo:SITE_URL}});
+  if(error)authGate('Connexion impossible',esc(error.message),'err','<button class="b-or" onclick="signInDiscord()">Réessayer</button>');
+}
+async function signOutDiscord(){
+  await SB.auth.signOut();
+  location.href=SITE_URL;
+}
+async function fetchMyProfile(userId){
+  const {data,error}=await SB.from('profiles').select('user_id,discord_id,nom_affiche,avatar_url,role,actif').eq('user_id',userId).maybeSingle();
+  if(error)throw error;
+  return data;
+}
+async function authBoot(){
+  try{
+    const {data:{session},error}=await SB.auth.getSession();
+    if(error)throw error;
+    CURRENT_SESSION=session;
+    if(!session){
+      authGate('Connexion requise',"Utilisez votre compte Discord pour accéder à l'Officine.",'', '<button class="b-or" onclick="signInDiscord()">Se connecter avec Discord</button>');
+      return false;
+    }
+    CURRENT_PROFILE=await fetchMyProfile(session.user.id);
+    if(!CURRENT_PROFILE){
+      authGate('Profil introuvable',"Votre compte Discord est authentifié, mais aucun profil Officine n'a été créé.",'err','<button onclick="signOutDiscord()">Déconnexion</button>');
+      return false;
+    }
+    if(!CURRENT_PROFILE.actif){
+      const who=esc(CURRENT_PROFILE.nom_affiche||session.user.user_metadata?.full_name||'Compte Discord');
+      authGate('Accès en attente','<b>'+who+'</b><br>Votre compte est bien identifié. Un administrateur doit maintenant autoriser votre accès.','wait','<button onclick="signOutDiscord()">Déconnexion</button>');
+      return false;
+    }
+    authOpenApp();
+    return true;
+  }catch(e){
+    console.error(e);
+    authGate("Erreur d'authentification",esc(e&&e.message?e.message:String(e)),'err','<button class="b-or" onclick="location.reload()">Réessayer</button>');
+    return false;
+  }
+}
+
+/* ═══════════ 1. DONNEES PARTAGEES SUPABASE ═══════════ */
+const UI_KEY='officine_ui_v2';
+let DB=null, SHARED_CHANNEL=null, RELOAD_T=null, IS_RELOADING=false;
+function uiRead(){try{return JSON.parse(localStorage.getItem(UI_KEY)||'{}')}catch(e){return{}}}
+function uiWrite(v){try{localStorage.setItem(UI_KEY,JSON.stringify(v))}catch(e){}}
+function save(){
+  if(!DB)return;
+  uiWrite({cart:DB.cart||[],practitioner:DB.settings&&DB.settings.practitioner||''});
+  const st=document.getElementById('saveSt');if(st)st.textContent='synchronisé';
+}
+function iso(v){return v?new Date(v).toISOString():null}
+function ms(v){return v?new Date(v).getTime():Date.now()}
+function currentUserId(){return CURRENT_SESSION&&CURRENT_SESSION.user?CURRENT_SESSION.user.id:null}
+function canWrite(){return CURRENT_PROFILE&&CURRENT_PROFILE.actif&&CURRENT_PROFILE.role!=='recrue'}
+function dbErr(e){console.error(e);toast(e&&e.message?e.message:String(e));return null}
+async function rpc(name,args){const {data,error}=await SB.rpc(name,args||{});if(error)throw error;return data}
+async function remoteJournal(type,text,amount,refKind,refId){
+  try{return await rpc('fn_add_journal',{p_type:type,p_text:text,p_amount:num(amount),p_ref_kind:refKind||null,p_ref_id:refId||null})}catch(e){console.warn('journal',e)}
+}
+async function q(table,cols='*'){
+  const {data,error}=await SB.from(table).select(cols);if(error)throw error;return data||[];
+}
+async function loadSharedData(doRender=true){
+  if(IS_RELOADING)return;IS_RELOADING=true;
+  try{
+    const [products,stock,recipes,recipeLines,movements,patients,consultations,consultItems,invoices,invoiceLines,payments,orders,orderLines,purchases,purchaseLines,atelier,journal,settings]=await Promise.all([
+      q('products'),q('stock'),q('recipes'),q('recipe_lines'),q('stock_movements'),q('patients'),q('consultations'),q('consultation_items'),q('invoices'),q('invoice_lines'),q('payments'),q('orders'),q('order_lines'),q('purchases'),q('purchase_lines'),q('atelier_orders'),q('journal'),q('app_settings')
+    ]);
+    const ui=uiRead();
+    const recipeMap={};recipes.forEach(r=>recipeMap[r.product_id]={yield:num(r.yield_qty)||1,notes:r.notes||'',lines:[]});
+    recipeLines.forEach(l=>{if(recipeMap[l.product_id])recipeMap[l.product_id].lines.push({pid:l.ingredient_id,qty:num(l.qty)})});
+    const d=blank();d.version=5;d.savedAt=Date.now();
+    d.products=products.map(p=>({id:p.id,name:p.name||'',family:p.family||'Autre',category:p.category||'',weight:num(p.weight),value:num(p.value),buyPrice:num(p.buy_price),sellPrice:num(p.sell_price),lot:num(p.lot)||1,sellable:!!p.sellable,active:!!p.active,threshold:num(p.threshold),notes:p.notes||'',recipe:(recipeMap[p.id]||{lines:[]}).lines,recipeYield:(recipeMap[p.id]||{yield:1}).yield,recipeNotes:(recipeMap[p.id]||{notes:''}).notes,archived:!!p.archived}));
+    d.stock={};stock.forEach(x=>d.stock[x.product_id]={[BIN]:num(x.qty)});d.products.forEach(x=>{if(!d.stock[x.id])d.stock[x.id]={[BIN]:0}});
+    d.movements=movements.map(x=>({id:x.id,ts:ms(x.created_at),pid:x.product_id,qty:num(x.qty_delta),type:x.type||'',reason:x.reason||'',ref:x.ref_id||'',refKind:x.ref_kind||''})).sort((a,b)=>b.ts-a.ts);
+    d.patients=patients.map(x=>({id:x.id,name:x.name||'',nickname:x.nickname||'',sex:x.sex||'',race:x.race||'',age:x.age||'',job:x.job||'',notes:x.notes||'',dead:!!x.dead,archived:!!x.archived,createdAt:ms(x.created_at)}));
+    const ci={};consultItems.forEach(x=>(ci[x.consultation_id]||(ci[x.consultation_id]=[])).push({pid:x.product_id,qty:num(x.qty),unit:num(x.unit)}));
+    d.consultations=consultations.map(x=>({id:x.id,patientId:x.patient_id||'',practitioner:x.practitioner||'',ts:ms(x.ts),service:x.service||'',type:x.type||'',motif:x.motif||'',symptoms:x.symptoms||'',observations:x.observations||'',diagnosis:x.diagnosis||'',exams:x.exams||'',injuries:x.injuries||'',state:x.state||'',care:x.care||'',meds:x.meds||'',treatment:x.treatment||'',reco:x.reco||'',followup:x.followup||'',price:num(x.price),addItems:!!x.add_items,paid:!!x.paid,invoiceId:x.invoice_id||'',items:ci[x.id]||[],stockDone:true,total:num(x.price)+(x.add_items?(ci[x.id]||[]).reduce((a,i)=>a+i.qty*i.unit,0):0)})).sort((a,b)=>b.ts-a.ts);
+    const il={};invoiceLines.forEach(x=>(il[x.invoice_id]||(il[x.invoice_id]=[])).push({pid:x.product_id||'',label:x.label||'',qty:num(x.qty),unit:num(x.unit),discount:num(x.discount)}));
+    const py={};payments.forEach(x=>(py[x.invoice_id]||(py[x.invoice_id]=[])).push({id:x.id,amount:num(x.amount),ts:ms(x.paid_at),note:x.note||''}));
+    d.invoices=invoices.map(x=>({id:x.id,num:x.num||'',ts:ms(x.created_at),client:x.client||'',patientId:x.patient_id||'',org:x.org||'',lines:il[x.id]||[],payments:(py[x.id]||[]).sort((a,b)=>b.ts-a.ts),method:x.method||'Septims',notes:x.notes||'',status:x.status||'À payer',stockDone:!!x.stock_done,orderId:x.order_id||''})).sort((a,b)=>b.ts-a.ts);
+    const ol={};orderLines.forEach(x=>(ol[x.order_id]||(ol[x.order_id]=[])).push({pid:x.product_id,qty:num(x.qty),unit:num(x.unit)}));
+    const atByOrder={};atelier.forEach(x=>{if(x.order_ref)(atByOrder[x.order_ref]||(atByOrder[x.order_ref]=[])).push(x.id)});
+    d.orders=orders.map(x=>({id:x.id,num:x.num||'',ts:ms(x.created_at),client:x.client||'',status:x.status||'Demande',wanted:x.wanted||'',deposit:num(x.deposit),notes:x.notes||'',lines:ol[x.id]||[],atelierOrders:atByOrder[x.id]||[]})).sort((a,b)=>b.ts-a.ts);
+    const pl={};purchaseLines.forEach(x=>(pl[x.purchase_id]||(pl[x.purchase_id]=[])).push({pid:x.product_id,qty:num(x.qty),unit:num(x.unit)}));
+    d.purchases=purchases.map(x=>({id:x.id,num:x.num||'',ts:ms(x.created_at),supplier:x.supplier||'',notes:x.notes||'',total:num(x.total),stockDone:!!x.stock_done,lines:pl[x.id]||[]})).sort((a,b)=>b.ts-a.ts);
+    d.atelier=atelier.map(x=>({id:x.id,num:x.num||'',pid:x.product_id,qty:num(x.qty),status:x.status||'En attente',alchimiste:x.alchimiste||'',ts:ms(x.created_at),orderRef:x.order_ref||'',cost:num(x.cost),doneTs:x.done_at?ms(x.done_at):null})).sort((a,b)=>b.ts-a.ts);
+    d.journal=journal.map(x=>({id:x.id,ts:ms(x.created_at),type:x.type||'',text:x.text||'',amount:num(x.amount),refKind:x.ref_kind||'',refId:x.ref_id||'',ref:x.ref_id||''})).sort((a,b)=>b.ts-a.ts);
+    const st=settings[0]||{};d.settings={currency:st.currency||'septims',consultPrice:num(st.consult_price)||20,practitioner:ui.practitioner||CURRENT_PROFILE?.nom_affiche||'',addProductsToConsult:st.add_products_to_consult!==false,orgName:st.org_name||'Officine',nextInv:1,nextOrd:1,nextPur:1,nextAte:1,priceStep:num(st.price_step)||.05,treasuryInit:num(st.treasury_init)};
+    d.cart=Array.isArray(ui.cart)?ui.cart:[];
+    DB=d;save();if(doRender)render();
+  }catch(e){dbErr(e)}finally{IS_RELOADING=false}
+}
+function scheduleSharedReload(){clearTimeout(RELOAD_T);RELOAD_T=setTimeout(()=>loadSharedData(true),250)}
+function startRealtime(){
+  if(SHARED_CHANNEL)SB.removeChannel(SHARED_CHANNEL);
+  SHARED_CHANNEL=SB.channel('officine-shared');
+  ['products','stock','recipes','recipe_lines','stock_movements','patients','consultations','consultation_items','invoices','invoice_lines','payments','orders','order_lines','purchases','purchase_lines','atelier_orders','journal','app_settings','profiles'].forEach(t=>SHARED_CHANNEL.on('postgres_changes',{event:'*',schema:'public',table:t},scheduleSharedReload));
+  SHARED_CHANNEL.subscribe(status=>{const st=document.getElementById('saveSt');if(st)st.textContent=status==='SUBSCRIBED'?'temps réel':'connexion…'});
+}
+
+/* ═══════════ 2. MODELE + MIGRATION ═══════════ */
+const FAM=['Ingrédient','Potion','Breuvage','Nourriture','Composant','Matériel médical','Autre'];
+const FCL={'Ingrédient':'t-ing','Potion':'t-pot','Breuvage':'t-breuv','Nourriture':'t-nour','Composant':'t-comp','Matériel médical':'t-mat','Autre':'t-autre'};
+const MVT=['Ajout','Retrait','Vente','Consommation','Production','Achat','Correction','Don','Perte'];
+const BIN='stock';
+const INVST=['Brouillon','À payer','Partiellement payé','Payé','Annulé'];
+const ORDST=['Demande','Acceptée','En préparation','Prête','Livrée','Annulée'];
+const JTYPE=['Vente','Consultation','Stock','Production','Facturation','Achat','Commande','Patient','Système'];
+
+function uid(p){return p+'_'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+
+function blank(){
+  return {version:4,savedAt:0,
+    settings:{currency:'septims',consultPrice:20,practitioner:'',addProductsToConsult:true,orgName:'Officine de Keizaal',nextInv:1,nextOrd:1,nextPur:1,nextAte:1,priceStep:0.05,treasuryInit:0},
+    products:[],stock:{},movements:[],patients:[],consultations:[],invoices:[],orders:[],purchases:[],journal:[],cart:[],atelier:[]};
+}
+
+function migrate(d){
+  const b=blank();
+  if(!d||typeof d!=='object') return seed(b);
+  const o=Object.assign(b,d);
+  o.settings=Object.assign(b.settings,d.settings||{});
+  ['products','movements','patients','consultations','invoices','orders','purchases','journal','cart','atelier'].forEach(k=>{ if(!Array.isArray(o[k])) o[k]=[]; });
+  if(!o.stock||typeof o.stock!=='object') o.stock={};
+  if(!o.settings.nextAte)o.settings.nextAte=1;
+  o.consultations.forEach(c=>{ if(!Array.isArray(c.prescriptions))c.prescriptions=[]; });
+  o.invoices.forEach(i=>{
+    if(!Array.isArray(i.payments)){
+      i.payments=[];
+      if(num(i.paidAmount)>0)i.payments.push({id:uid('pay'),amount:num(i.paidAmount),ts:i.ts||Date.now(),note:'Solde initial (migration)'});
+    }
+    delete i.paidAmount;
+  });
+
+  o.products.forEach(p=>{
+    if(!p.id) p.id=uid('p');
+    if(p.sellable===undefined) p.sellable=true;
+    if(p.active===undefined) p.active=true;
+    if(!Array.isArray(p.recipe)) p.recipe=[];
+    ['value','buyPrice','sellPrice','weight','threshold','lot'].forEach(k=>{ p[k]=num(p[k]); });
+    if(!p.lot) p.lot=1;
+    if(!FAM.includes(p.family)) p.family='Autre';
+  });
+
+  const old=(d.version||0)<3;
+  Object.keys(o.stock).forEach(pid=>{
+    const v=o.stock[pid];
+    if(typeof v==='number'){ o.stock[pid]={[BIN]:num(v)}; return; }
+    if(v&&typeof v==='object'){
+      let tot=0; Object.keys(v).forEach(L=>{ tot+=num(v[L]); });
+      o.stock[pid]={[BIN]:tot};
+    }else o.stock[pid]={[BIN]:0};
+  });
+  o.products.forEach(p=>{ if(!o.stock[p.id]) o.stock[p.id]={[BIN]:0}; });
+  if(old&&o.movements.length) o.movements.forEach(m=>{ if(m.loc&&m.loc!==BIN) m.reason=(m.reason?m.reason+' ':'')+'['+m.loc+']'; });
+
+  o.version=3;
+  if(!o.products.length) seed(o);
+  return o;
+}
+
+function seed(o){
+  const mk=(name,family,opt)=>{const p=Object.assign({id:uid('p'),name,family,category:'',weight:0,value:0,buyPrice:0,sellPrice:0,lot:1,sellable:true,active:true,threshold:0,notes:'',recipe:[],archived:false},opt||{});o.products.push(p);return p;};
+  const ail=mk('Ail','Ingrédient',{weight:.25,value:1,buyPrice:.5,sellPrice:1,threshold:50});
+  const sel=mk('Tas de sel','Ingrédient',{weight:.2,value:2,buyPrice:1,sellPrice:2,threshold:30});
+  const suc=mk('Sucrelune','Ingrédient',{weight:.2,value:5,buyPrice:3,sellPrice:6,threshold:20});
+  const lyr=mk('Lys rouge','Ingrédient',{weight:.1,value:3,buyPrice:1.5,sellPrice:3,threshold:20});
+  const lyv=mk('Lys violet','Ingrédient',{weight:.1,value:3,buyPrice:1.5,sellPrice:3,threshold:20});
+  const lgd=mk('Langue de dragon','Ingrédient',{weight:.1,value:15,buyPrice:8,sellPrice:16,threshold:10});
+  const chd=mk('Chardon','Ingrédient',{weight:.1,value:1,buyPrice:.5,sellPrice:1,threshold:20});
+  mk('Bandage','Matériel médical',{weight:.1,value:2,buyPrice:1,sellPrice:3,threshold:20});
+  mk('Attelle','Matériel médical',{weight:1,value:8,buyPrice:4,sellPrice:10,threshold:5});
+  mk('Potion de soin','Potion',{weight:.5,value:25,buyPrice:12,sellPrice:25,threshold:10,recipe:[{pid:lyr.id,qty:2},{pid:chd.id,qty:1}]});
+  mk('Potion médicinale','Potion',{weight:.5,value:20,buyPrice:10,sellPrice:20,threshold:10,recipe:[{pid:ail.id,qty:3},{pid:lyv.id,qty:2}]});
+  mk('Breuvage de puissance durable','Breuvage',{weight:.5,value:60,sellPrice:60,threshold:5,recipe:[{pid:sel.id,qty:5},{pid:ail.id,qty:15},{pid:suc.id,qty:2}]});
+  mk('Breuvage de vigueur améliorée','Breuvage',{weight:.5,value:45,sellPrice:45,threshold:5,recipe:[{pid:ail.id,qty:8},{pid:lgd.id,qty:1}]});
+  o.products.forEach(p=>{ o.stock[p.id]={[BIN]:0}; });
+  const set=(n,q)=>{const p=o.products.find(x=>x.name===n); if(p) o.stock[p.id][BIN]=q;};
+  set('Ail',127);set('Tas de sel',150);set('Sucrelune',40);set('Lys rouge',51);set('Lys violet',111);
+  set('Langue de dragon',51);set('Chardon',30);set('Bandage',24);set('Attelle',6);set('Potion de soin',8);
+  return o;
+}
+
+/* ═══════════ 3. HELPERS ═══════════ */
+function num(v){const n=parseFloat(String(v==null?0:v).replace(',','.'));return isFinite(n)?n:0;}
+function fmt(n){return num(n).toLocaleString('fr-FR',{maximumFractionDigits:2});}
+function sp(n){return fmt(n)+' '+DB.settings.currency;}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function dt(ts){const d=new Date(ts);return d.toLocaleDateString('fr-FR')+' à '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}
+function dOnly(ts){return new Date(ts).toLocaleDateString('fr-FR');}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2100);}
+function ask(m){return confirm(m);}
+function P(id){return DB.products.find(p=>p.id===id);}
+function PN(id){const p=P(id);return p?p.name:'(produit supprimé)';}
+function PAT(id){return DB.patients.find(p=>p.id===id);}
+function patName(id){const p=PAT(id);return p?p.name:'—';}
+
+function qty(pid){const s=DB.stock[pid];if(!s)return 0;return num(s[BIN]);}
+function stVal(pid){const p=P(pid);return p?qty(pid)*num(p.value):0;}
+function stStatus(pid){const p=P(pid),q=qty(pid);if(!p)return'';if(q<=0)return'rupture';if(p.threshold>0&&q<=p.threshold)return'faible';return'ok';}
+function stateTag(p){
+  if(p.archived)return '<span class="tag t-n">Archivé</span>';
+  const q=qty(p.id);
+  if(q<=0)return '<span class="tag t-d">Rupture</span>';
+  if(p.threshold>0&&q<=p.threshold)return '<span class="tag t-w">Stock faible</span>';
+  return (p.sellable&&p.active)?'<span class="tag t-ok">En vente</span>':'<span class="tag t-n">Hors vente</span>';
+}
+
+async function mv(pid,delta,type,reason,ref){
+  try{return await rpc('fn_stock_adjust',{p_product_id:pid,p_delta:num(delta),p_type:type||'Correction',p_reason:reason||'',p_ref_kind:ref?'product':null,p_ref_id:ref||null})}catch(e){throw e}
+}
+async function take(pid,q,type,reason,ref){return mv(pid,-Math.abs(num(q)),type,reason,ref)}
+function jr(type,text,amount,refKind,refId){remoteJournal(type,text,amount,refKind||null,refId||null);}
+
+function usedIn(pid){
+  const r=[];
+  DB.products.forEach(p=>{(p.recipe||[]).forEach(l=>{if(l.pid===pid)r.push({p,qty:l.qty});});});
+  return r;
+}
+function needs(pid,n){
+  const p=P(pid);if(!p||!p.recipe.length)return[];
+  return p.recipe.map(l=>{const need=num(l.qty)*n,av=qty(l.pid);return{pid:l.pid,name:PN(l.pid),need,av,miss:Math.max(0,need-av)};});
+}
+function invTotal(inv){return (inv.lines||[]).reduce((a,l)=>a+lineTotal(l),0);}
+function lineTotal(l){return Math.max(0,num(l.qty)*num(l.unit)-num(l.discount));}
+function invStatusTag(s){
+  const m={'Payé':'t-ok','À payer':'t-w','Partiellement payé':'t-b','Annulé':'t-d','Brouillon':'t-n'};
+  return '<span class="tag '+(m[s]||'t-n')+'">'+esc(s)+'</span>';
+}
+function ordStatusTag(s){
+  const m={'Livrée':'t-ok','Prête':'t-b','En préparation':'t-w','Acceptée':'t-b','Annulée':'t-d','Demande':'t-n'};
+  return '<span class="tag '+(m[s]||'t-n')+'">'+esc(s)+'</span>';
+}
+
+/* ═══════════ 4. UI GENERIQUE ═══════════ */
+const ov=document.getElementById('ov'),dr=document.getElementById('dr'),md=document.getElementById('md');
+ov.onclick=()=>{closeD();closeM();};
+function openD(title,body,foot){document.getElementById('drT').innerHTML=title;document.getElementById('drB').innerHTML=body;document.getElementById('drF').innerHTML=foot||'';ov.classList.add('on');dr.classList.add('on');}
+function closeD(){dr.classList.remove('on');if(!md.classList.contains('on'))ov.classList.remove('on');}
+function openM(title,body,foot,w){document.getElementById('mdT').innerHTML=title;document.getElementById('mdB').innerHTML=body;document.getElementById('mdF').innerHTML=foot||'';md.style.width=(w||840)+'px';ov.classList.add('on');md.classList.add('on');}
+function closeM(){md.classList.remove('on');if(!dr.classList.contains('on'))ov.classList.remove('on');}
+function val(id){const e=document.getElementById(id);return e?e.value:'';}
+function chk(id){const e=document.getElementById(id);return e?e.checked:false;}
+function opts(arr,sel){return arr.map(a=>'<option'+(a===sel?' selected':'')+'>'+esc(a)+'</option>').join('');}
+function prodOpts(sel,filter){
+  return '<option value="">— produit —</option>'+DB.products.filter(p=>!p.archived&&(!filter||filter(p)))
+    .sort((a,b)=>a.name.localeCompare(b.name))
+    .map(p=>'<option value="'+p.id+'"'+(p.id===sel?' selected':'')+'>'+esc(p.name)+' ('+fmt(qty(p.id))+')</option>').join('');
+}
+function patOpts(sel){
+  return '<option value="">— patient —</option>'+DB.patients.filter(p=>!p.archived).sort((a,b)=>a.name.localeCompare(b.name))
+    .map(p=>'<option value="'+p.id+'"'+(p.id===sel?' selected':'')+'>'+esc(p.name)+'</option>').join('');
+}
+
+/* ═══════════ 5. NAVIGATION ═══════════ */
+const PAGES=[
+ ['dash','▦','Tableau de bord'],['patients','☥','Patients'],['consult','✚','Consultations'],
+ ['orders','📜','Commandes'],['inv','🧾','Factures'],['stock','📦','Stock'],
+ ['recipes','⚗','Recettes'],['atelier','🛠','Atelier'],['purch','🛒','Achats'],['tarifs','🏷','Tarifs'],
+ ['journal','🕮','Journal'],['stats','📈','Statistiques'],['settings','⚙','Paramètres']
+];
+const ATE_ST=['En attente','En cours','Terminé','Impossible','Annulée'];
+function invPaid(inv){return (inv.payments||[]).reduce((a,p)=>a+num(p.amount),0);}
+function invRemain(inv){return Math.max(0,invTotal(inv)-invPaid(inv));}
+function invRecalcStatus(inv){
+  if(inv.status==='Annulé'||inv.status==='Brouillon')return;
+  const t=invTotal(inv),paid=invPaid(inv);
+  if(paid<=0)inv.status='À payer';else if(paid<t)inv.status='Partiellement payé';else inv.status='Payé';
+}
+function patientInvoices(pid){return DB.invoices.filter(i=>i.patientId===pid&&i.status!=='Annulé');}
+function patientDue(pid){return patientInvoices(pid).reduce((a,i)=>a+invRemain(i),0);}
+function toutesFacturesDues(){return DB.invoices.filter(i=>i.status!=='Annulé'&&invRemain(i)>0);}
+function craftEngine(pid,n,opts){
+  opts=opts||{};
+  const rows=needs(pid,n),miss=rows.filter(r=>r.miss>0);
+  if(miss.length&&!opts.force)return{ok:false,rows,miss};
+  const cost=rows.reduce((a,r)=>{const ip=P(r.pid);return a+(ip?num(ip.buyPrice):0)*r.need;},0);
+  rows.forEach(r=>take(r.pid,r.need,'Production',(opts.reason||'production')+' — '+PN(pid),opts.refId));
+  mv(pid,n,'Production',opts.reason||('fabrication'+(opts.source?' ('+opts.source+')':'')),opts.refId);
+  jr('Production',PN(pid)+' ×'+fmt(n)+(opts.source?' — '+opts.source:''),cost,'product',pid);
+  return{ok:true,rows,cost};
+}
+function openRef(kind,id){
+  if(!kind||!id)return;
+  if(kind==='invoice'&&DB.invoices.find(x=>x.id===id))editInv(id);
+  else if(kind==='order'&&DB.orders.find(x=>x.id===id))editOrder(id);
+  else if(kind==='consult'&&DB.consultations.find(x=>x.id===id))editConsult(id);
+  else if(kind==='atelier'&&DB.atelier.find(x=>x.id===id))openAtelier(id);
+  else if(kind==='purchase'&&DB.purchases.find(x=>x.id===id))editPurch(id);
+  else if(kind==='product'&&P(id))openProd(id);
+  else if(kind==='patient'&&PAT(id))openPat(id);
+  else toast('Élément introuvable (peut-être supprimé)');
+}
+let page='dash';
+function renderNav(){
+  document.getElementById('nav').innerHTML=PAGES.map(p=>{
+    let b='';
+    if(p[0]==='inv'){const n=DB.invoices.filter(i=>i.status==='À payer'||i.status==='Partiellement payé').length;if(n)b='<b>'+n+'</b>';}
+    if(p[0]==='orders'){const n=DB.orders.filter(o=>['Demande','Acceptée','En préparation','Prête'].includes(o.status)).length;if(n)b='<b>'+n+'</b>';}
+    if(p[0]==='stock'){const n=DB.products.filter(x=>!x.archived&&stStatus(x.id)!=='ok').length;if(n)b='<b>'+n+'</b>';}
+    if(p[0]==='atelier'){const n=DB.atelier.filter(o=>o.status==='En attente'||o.status==='En cours').length;if(n)b='<b>'+n+'</b>';}
+    return '<a onclick="go(\''+p[0]+'\')" class="'+(page===p[0]?'on':'')+'"><i>'+p[1]+'</i>'+p[2]+b+'</a>';
+  }).join('');
+  document.getElementById('cartBtn').textContent='🧺 '+DB.cart.length;
+}
+function go(p){page=p;render();}
+function render(){
+  renderNav();
+  const t=PAGES.find(x=>x[0]===page);
+  document.getElementById('ttl').textContent=t?t[2]:'';
+  document.getElementById('topAct').innerHTML='';
+  ({dash:vDash,patients:vPatients,consult:vConsult,inv:vInv,orders:vOrders,stock:vStock,
+    recipes:vRecipes,atelier:vAtelier,purch:vPurch,tarifs:vTarifs,journal:vJournal,stats:vStats,settings:vSettings}[page]||vDash)();
+  save();
+}
+document.getElementById('cartBtn').onclick=openCart;
+
+/* ═══════════ 6. TABLEAU DE BORD ═══════════ */
+function ca(){return DB.invoices.filter(i=>i.status!=='Annulé'&&i.status!=='Brouillon').reduce((a,i)=>a+invPaid(i),0);}
+function dep(){return DB.purchases.reduce((a,p)=>a+num(p.total),0);}
+function vDash(){
+  const alerts=DB.products.filter(p=>!p.archived&&stStatus(p.id)!=='ok');
+  const pend=DB.orders.filter(o=>!['Livrée','Annulée'].includes(o.status));
+  const stockVal=DB.products.reduce((a,p)=>a+stVal(p.id),0);
+  const aEncaisser=toutesFacturesDues().reduce((a,i)=>a+invRemain(i),0);
+  const ateActifs=DB.atelier.filter(o=>o.status==='En attente'||o.status==='En cours').length;
+  document.getElementById('topAct').innerHTML=
+    '<button class="b-or" onclick="editConsult()">✚ Consultation</button>'+
+    '<button onclick="editInv()">🧾 Facture</button>'+
+    '<button onclick="openProduce()">⚗ Produire</button>'+
+    '<button onclick="openAdjust()">± Mouvement</button>';
+  const kpi=(k,v,d,click)=>'<div class="kpi'+(click?' clk':'')+'"'+(click?' onclick="'+click+'"':'')+'><div class="k">'+k+'</div><div class="v">'+v+'</div><div class="d">'+(d||'')+'</div></div>';
+  let h='<div class="g g4" style="margin-bottom:12px">'+
+    kpi('À encaisser',fmt(aEncaisser),DB.settings.currency,'invF={q:\'\',st:\'\',from:\'\',to:\'\'};go(\'inv\')')+
+    kpi('Encaissé',fmt(ca()),DB.settings.currency)+
+    kpi('Dépenses',fmt(dep()),DB.settings.currency)+
+    kpi('Bénéfice',fmt(ca()-dep()),'théorique')+
+    kpi('Commandes en attente',pend.length,'commandes','go(\'orders\')')+
+    kpi('Ordres Atelier actifs',ateActifs,'en cours','go(\'atelier\')')+
+    kpi('Produits en rupture',DB.products.filter(p=>!p.archived&&stStatus(p.id)==='rupture').length,'produits','go(\'stock\')')+
+    kpi('Consultations',DB.consultations.length,'au total')+
+    kpi('Patients',DB.patients.filter(p=>!p.archived).length,'enregistrés')+
+    kpi('Valeur du stock',fmt(stockVal),DB.settings.currency)+
+  '</div>';
+  h+='<div class="g g2"><div>';
+  h+='<div class="pan" style="margin-bottom:10px"><div class="ph">⚠ Ruptures &amp; stock faible<div class="sp"></div><button class="b-s" onclick="go(\'stock\')">Stock</button></div>'+
+    (alerts.length?'<table><tbody>'+alerts.slice(0,9).map(p=>'<tr class="clk" onclick="openProd(\''+p.id+'\')"><td>'+esc(p.name)+'</td><td class="right mono">'+fmt(qty(p.id))+'</td><td class="right" style="width:88px">'+stateTag(p)+'</td></tr>').join('')+'</tbody></table>':'<div class="empty">Aucune alerte</div>')+'</div>';
+  h+='<div class="pan" style="margin-bottom:10px"><div class="ph">📜 Commandes en attente<div class="sp"></div><button class="b-s" onclick="go(\'orders\')">Voir</button></div>'+
+    (pend.length?'<table><tbody>'+pend.slice(0,6).map(o=>'<tr class="clk" onclick="editOrder(\''+o.id+'\')"><td>'+esc(o.num)+'</td><td>'+esc(o.client||'—')+'</td><td class="right">'+ordStatusTag(o.status)+'</td></tr>').join('')+'</tbody></table>':'<div class="empty">Aucune commande</div>')+'</div>';
+  h+='<div class="pan"><div class="ph">⚗ Productions récentes</div>'+listJ(['Production'],6)+'</div></div><div>';
+  h+='<div class="pan" style="margin-bottom:10px"><div class="ph">✚ Dernières consultations<div class="sp"></div><button class="b-s" onclick="go(\'consult\')">Voir</button></div>'+
+    (DB.consultations.length?'<table><tbody>'+DB.consultations.slice(0,6).map(c=>'<tr class="clk" onclick="editConsult(\''+c.id+'\')"><td>'+esc(patName(c.patientId))+'</td><td class="small muted">'+esc(c.motif||'—')+'</td><td class="right mono">'+fmt(c.price)+'</td></tr>').join('')+'</tbody></table>':'<div class="empty">Aucune consultation</div>')+'</div>';
+  h+='<div class="pan" style="margin-bottom:10px"><div class="ph">🧾 Dernières factures<div class="sp"></div><button class="b-s" onclick="go(\'inv\')">Voir</button></div>'+
+    (DB.invoices.length?'<table><tbody>'+DB.invoices.slice(0,6).map(i=>'<tr class="clk" onclick="editInv(\''+i.id+'\')"><td>'+esc(i.num)+'</td><td>'+esc(i.client||'—')+'</td><td class="right mono">'+fmt(invTotal(i))+'</td><td class="right">'+invStatusTag(i.status)+'</td></tr>').join('')+'</tbody></table>':'<div class="empty">Aucune facture</div>')+'</div>';
+  h+='<div class="pan"><div class="ph">🕮 Dernières opérations<div class="sp"></div><button class="b-s" onclick="go(\'journal\')">Journal</button></div>'+listJ(null,8)+'</div>';
+  h+='</div></div>';
+  document.getElementById('view').innerHTML=h;
+}
+function listJ(types,n){
+  const l=DB.journal.filter(j=>!types||types.includes(j.type)).slice(0,n);
+  if(!l.length)return '<div class="empty">Rien pour le moment</div>';
+  return '<table><tbody>'+l.map(j=>'<tr><td class="tiny muted" style="width:104px">'+dt(j.ts)+'</td><td><span class="tag t-n">'+esc(j.type)+'</span></td><td>'+esc(j.text)+'</td><td class="right mono">'+(j.amount?fmt(j.amount):'')+'</td></tr>').join('')+'</tbody></table>';
+}
+
+/* ═══════════ 7. STOCK ═══════════ */
+let stF={q:'',fam:'',flag:''};
+function vStock(){
+  document.getElementById('topAct').innerHTML=
+    '<button class="b-or" onclick="openProd()">+ Ajouter produit</button><button onclick="openRemoveProduct()">- Retirer produit</button><button onclick="openAdjust()">± Mouvement</button>';
+  let l=DB.products.filter(p=>!p.archived);
+  if(stF.q)l=l.filter(p=>(p.name+' '+p.category+' '+p.notes).toLowerCase().includes(stF.q.toLowerCase()));
+  if(stF.fam)l=l.filter(p=>p.family===stF.fam);
+  if(stF.flag==='instock')l=l.filter(p=>qty(p.id)>0);
+  if(stF.flag==='low')l=l.filter(p=>stStatus(p.id)==='faible');
+  if(stF.flag==='rupt')l=l.filter(p=>stStatus(p.id)==='rupture');
+  if(stF.flag==='vente')l=l.filter(p=>p.sellable&&p.active);
+  if(stF.flag==='hors')l=l.filter(p=>!(p.sellable&&p.active));
+  if(stF.flag==='noval')l=l.filter(p=>!p.value);
+  l.sort((a,b)=>a.family.localeCompare(b.family)||a.name.localeCompare(b.name));
+
+  const units=l.reduce((a,p)=>a+qty(p.id),0);
+  const value=l.reduce((a,p)=>a+stVal(p.id),0);
+  const poids=l.reduce((a,p)=>a+qty(p.id)*num(p.weight),0);
+
+  let h='<div class="pan pad row" style="margin-bottom:10px">'+
+    '<input id="sq" placeholder="Rechercher un produit…" value="'+esc(stF.q)+'" style="flex:1;min-width:170px" oninput="stF.q=this.value;vStock();document.getElementById(\'sq\').focus()">'+
+    '<select style="width:155px" onchange="stF.fam=this.value;vStock()"><option value="">Toutes familles</option>'+FAM.map(f=>'<option'+(stF.fam===f?' selected':'')+'>'+f+'</option>').join('')+'</select>'+
+    '<select style="width:150px" onchange="stF.flag=this.value;vStock()">'+
+      [['','Tous'],['instock','En stock'],['low','Stock faible'],['rupt','Rupture'],['vente','En vente'],['hors','Hors vente'],['noval','Valeur manquante']]
+      .map(o=>'<option value="'+o[0]+'"'+(stF.flag===o[0]?' selected':'')+'>'+o[1]+'</option>').join('')+'</select>'+
+    '<div class="sp" style="flex:1"></div>'+
+    '<span class="muted small mono">'+l.length+' références · '+fmt(units)+' unités · '+fmt(value)+' '+DB.settings.currency+' · '+fmt(poids)+' poids</span></div>';
+
+  h+='<div class="pan"><table><thead><tr><th>Produit</th><th>Famille</th><th class="right">Qté</th><th class="right">Valeur</th><th class="right">Prix achat</th><th class="right">Prix vente</th><th class="right">Poids</th><th class="right">Seuil</th><th>État</th><th class="right">Actions</th></tr></thead><tbody>';
+  h+=l.map(p=>{
+    const q=qty(p.id),st=stStatus(p.id);
+    const col=st==='rupture'?'var(--rouge)':st==='faible'?'var(--jaune)':'var(--tx)';
+    return '<tr class="clk" onclick="openProd(\''+p.id+'\')">'+
+    '<td><b>'+esc(p.name)+'</b>'+(p.recipe.length?' <span class="tiny muted" title="possède une recette">⚗</span>':'')+(p.category?'<div class="tiny muted">'+esc(p.category)+'</div>':'')+'</td>'+
+    '<td><span class="tag '+FCL[p.family]+'">'+esc(p.family)+'</span></td>'+
+    '<td class="right mono" style="color:'+col+'"><b>'+fmt(q)+'</b></td>'+
+    '<td class="right mono">'+fmt(p.value)+'</td>'+
+    '<td class="right mono muted">'+fmt(p.buyPrice)+'</td>'+
+    '<td class="right mono">'+fmt(p.sellPrice)+'</td>'+
+    '<td class="right mono muted">'+fmt(p.weight)+'</td>'+
+    '<td class="right mono muted">'+(p.threshold||'—')+'</td>'+
+    '<td>'+stateTag(p)+'</td>'+
+    '<td class="right" style="white-space:nowrap">'+
+      '<button class="b-i b-v" title="Ajouter du stock" onclick="event.stopPropagation();openAdjust(\''+p.id+'\',1)">+</button> '+
+      '<button class="b-i b-r" title="Retirer du stock" onclick="event.stopPropagation();openAdjust(\''+p.id+'\',-1)">−</button> '+
+      '<button class="b-i" title="Modifier la fiche" onclick="event.stopPropagation();openProd(\''+p.id+'\',\'edit\')">✎</button> '+
+      '<button class="b-i" title="Ajouter au panier" onclick="event.stopPropagation();addCart(\''+p.id+'\',1)">🧺</button>'+
+    '</td></tr>';
+  }).join('')||'<tr><td colspan="10" class="empty">Aucun produit ne correspond</td></tr>';
+  h+='</tbody></table></div>';
+  document.getElementById('view').innerHTML=h;
+}
+
+function openProd(id,tab){
+  const p=id?P(id):null;
+  const n=p||{id:'',name:'',family:'Ingrédient',category:'',weight:0,value:0,buyPrice:0,sellPrice:0,lot:1,sellable:true,active:true,threshold:0,notes:'',recipe:[]};
+  let b='';
+  if(p){
+    const st=stStatus(p.id),col=st==='rupture'?'var(--rouge)':st==='faible'?'var(--jaune)':'var(--tx)';
+    b+='<div class="fiche"><div class="row"><b style="font-size:15px">'+esc(p.name)+'</b><span class="tag '+FCL[p.family]+'">'+esc(p.family)+'</span>'+stateTag(p)+'</div>'+
+    '<div class="kv">'+
+     '<div><span>Quantité</span><b style="color:'+col+'">'+fmt(qty(p.id))+'</b></div>'+
+     '<div><span>Valeur</span><b>'+fmt(p.value)+'</b></div>'+
+     '<div><span>Prix achat</span><b>'+fmt(p.buyPrice)+'</b></div>'+
+     '<div><span>Prix vente</span><b>'+fmt(p.sellPrice)+'</b></div>'+
+     '<div><span>Poids</span><b>'+fmt(p.weight)+'</b></div>'+
+     '<div><span>Seuil</span><b>'+(p.threshold||'—')+'</b></div>'+
+    '</div><div class="small muted" style="margin-top:7px">Stock total : '+sp(stVal(p.id))+' · '+fmt(qty(p.id)*num(p.weight))+' de poids</div></div>';
+    b+='<div class="row" style="margin-bottom:10px"><button class="b-v" onclick="openAdjust(\''+p.id+'\',1)">+ Ajouter</button>'+
+       '<button class="b-r" onclick="openAdjust(\''+p.id+'\',-1)">− Retirer</button>'+
+       '<button onclick="addCart(\''+p.id+'\',1)">🧺 Panier</button>'+
+       (st!=='ok'?'<button onclick="addToPurchase(\''+p.id+'\')">🛒 Ajouter à un achat</button>':'')+'</div>';
+  }
+  b+='<div class="tabs"><span class="'+(tab==='edit'||!p?'on':'')+'" onclick="pTab(this,\'pf1\')">Fiche</span>'+
+     '<span class="'+(tab==='edit'||!p?'':'on')+'" onclick="pTab(this,\'pf6\')">Mouvements</span>'+
+     '<span onclick="pTab(this,\'pf2\')">Tarifs</span><span onclick="pTab(this,\'pf4\')">Recette</span><span onclick="pTab(this,\'pf5\')">Utilisé dans</span></div>';
+  const showEdit=(tab==='edit'||!p);
+  b+='<div id="pf1" style="'+(showEdit?'':'display:none')+'">'+
+    '<div class="f"><label>Nom</label><input id="pName" value="'+esc(n.name)+'"></div>'+
+    '<div class="g g2"><div class="f"><label>Famille</label><select id="pFam">'+opts(FAM,n.family)+'</select></div>'+
+    '<div class="f"><label>Catégorie libre</label><input id="pCat" value="'+esc(n.category)+'" placeholder="ex. plante, minéral…"></div></div>'+
+    (p?'':'<div class="f"><label>Quantité initiale</label><input id="pQ0" value="0"></div>')+
+    '<div class="g g3"><div class="f"><label>Poids unitaire</label><input id="pW" value="'+fmt(n.weight)+'"></div>'+
+    '<div class="f"><label>Lot de vente</label><input id="pLot" value="'+fmt(n.lot||1)+'"></div>'+
+    '<div class="f"><label>Seuil d\'alerte</label><input id="pTh" value="'+fmt(n.threshold)+'"></div></div>'+
+    (p?'':'<div class="g g3"><div class="f"><label>Valeur</label><input id="pVal0" value="'+fmt(n.value)+'"></div>'+
+      '<div class="f"><label>Prix d\'achat</label><input id="pBuy0" value="'+fmt(n.buyPrice)+'"></div>'+
+      '<div class="f"><label>Prix de vente</label><input id="pSell0" value="'+fmt(n.sellPrice)+'"></div></div>')+
+    '<div class="row" style="margin:8px 0"><label class="chk"><input type="checkbox" id="pSell" '+(n.sellable?'checked':'')+'>Vendable</label>'+
+    '<label class="chk"><input type="checkbox" id="pAct" '+(n.active?'checked':'')+'>En vente</label></div>'+
+    '<div class="f"><label>Notes</label><textarea id="pNotes" rows="3">'+esc(n.notes)+'</textarea></div></div>';
+  b+='<div id="pf6" style="'+(showEdit?'display:none':'')+'">'+(p?mvPanel(p):'<div class="empty">—</div>')+'</div>';
+  b+='<div id="pf2" style="display:none">'+priceEditor(n)+'</div>';
+  b+='<div id="pf4" style="display:none">'+(p?recipePanel(p):'<div class="empty">Enregistrez d\'abord la fiche.</div>')+'</div>';
+  b+='<div id="pf5" style="display:none">'+(p?usedPanel(p):'<div class="empty">—</div>')+'</div>';
+  const f='<button class="b-or" onclick="saveProd(\''+(p?p.id:'')+'\')">Enregistrer</button>'+
+    (p?'<div style="flex:1"></div><button class="b-r" onclick="archProd(\''+p.id+'\')">Archiver</button>':'');
+  openD((p?'📦 ':'+ ')+esc(p?p.name:'Nouveau produit'),b,f);
+}
+function pTab(el,id){
+  el.parentElement.querySelectorAll('span').forEach(s=>s.classList.remove('on'));el.classList.add('on');
+  ['pf1','pf2','pf4','pf5','pf6'].forEach(i=>{const e=document.getElementById(i);if(e)e.style.display=i===id?'':'none';});
+}
+function mvPanel(p){
+  const ms=DB.movements.filter(m=>m.pid===p.id).slice(0,40);
+  if(!ms.length)return '<div class="empty">Aucun mouvement enregistré</div>';
+  return '<div class="small muted" style="margin-bottom:6px">'+ms.length+' dernier(s) mouvement(s)</div><table><tbody>'+
+   ms.map(m=>'<tr><td class="tiny muted" style="width:104px">'+dt(m.ts)+'</td><td><span class="tag t-n">'+esc(m.type)+'</span></td>'+
+   '<td class="mono right" style="width:58px;color:'+(m.qty<0?'var(--rouge)':'var(--vert)')+'"><b>'+(m.qty>0?'+':'')+fmt(m.qty)+'</b></td>'+
+   '<td class="tiny muted">'+esc(m.reason||'')+'</td></tr>').join('')+'</tbody></table>';
+}
+function priceEditor(n){
+  const row=(lbl,id,v,hint)=>'<div class="f"><label>'+lbl+'</label><div class="row" style="flex-wrap:nowrap">'+
+    '<button class="b-s" onclick="bump(\''+id+'\',-1)">−1</button><button class="b-s" onclick="bump(\''+id+'\',-0.05)">−0,05</button>'+
+    '<input id="'+id+'" value="'+fmt(v)+'" style="text-align:center">'+
+    '<button class="b-s" onclick="bump(\''+id+'\',0.05)">+0,05</button><button class="b-s" onclick="bump(\''+id+'\',1)">+1</button></div>'+
+    (hint?'<div class="tiny muted" style="margin-top:2px">'+hint+'</div>':'')+'</div>';
+  return '<div class="small muted" style="margin-bottom:9px">Les trois montants sont indépendants. Modifier un tarif ne touche jamais à la quantité.</div>'+
+    row('Valeur de l\'objet','pVal',n.value,'sert au calcul de la valeur du stock')+
+    row('Prix d\'achat','pBuy',n.buyPrice,'ce que je paie au fournisseur')+
+    row('Prix de vente','pSell',n.sellPrice,'proposé par défaut en facture et en vente');
+}
+function bump(id,d){const e=document.getElementById(id);e.value=fmt(Math.max(0,num(e.value)+d));}
+async function saveProd(id){
+  if(!canWrite())return toast('Accès en lecture seule');
+  const name=val('pName').trim();if(!name)return toast('Le nom est obligatoire');
+  const payload={name,family:val('pFam'),category:val('pCat').trim(),weight:num(val('pW')),lot:num(val('pLot'))||1,threshold:num(val('pTh')),sellable:chk('pSell'),active:chk('pAct'),notes:val('pNotes')};
+  const gv=i=>{const e=document.getElementById(i);return e?num(e.value):null};
+  let pid=id;
+  try{
+    if(!id){
+      payload.value=gv('pVal0')||0;payload.buy_price=gv('pBuy0')||0;payload.sell_price=gv('pSell0')||0;payload.created_by=currentUserId();
+      const {data,error}=await SB.from('products').insert(payload).select('id').single();if(error)throw error;pid=data.id;
+      const q0=gv('pQ0')||0;if(q0)await rpc('fn_stock_adjust',{p_product_id:pid,p_delta:q0,p_type:'Ajout',p_reason:'Stock initial',p_ref_kind:'product',p_ref_id:pid});
+      await remoteJournal('Système','Création du produit « '+name+' »',0,'product',pid);
+    }else{
+      if(gv('pVal')!==null)payload.value=gv('pVal');if(gv('pBuy')!==null)payload.buy_price=gv('pBuy');if(gv('pSell')!==null)payload.sell_price=gv('pSell');payload.updated_by=currentUserId();
+      const {error}=await SB.from('products').update(payload).eq('id',id);if(error)throw error;
+      await remoteJournal('Système','Modification de la fiche « '+name+' »',0,'product',id);
+    }
+    closeD();await loadSharedData(true);toast('Fiche enregistrée');
+  }catch(e){dbErr(e)}
+}
+function addToPurchase(pid){
+  const p=P(pid);if(!p)return;
+  const suggested=Math.max(1,num(p.threshold)-qty(pid))||10;
+  closeD();editPurch();
+  setTimeout(()=>{
+    const box=document.getElementById('puLines');
+    box.insertAdjacentHTML('beforeend',purLine({pid:pid,qty:suggested,unit:p.buyPrice}));
+    calcPur();
+  },50);
+}
+async function archProd(id){
+  const p=P(id);if(!p)return;if(!ask('Archiver « '+p.name+' » ?'))return;
+  try{const {error}=await SB.from('products').update({archived:true,updated_by:currentUserId()}).eq('id',id);if(error)throw error;await remoteJournal('Système','Archivage de « '+p.name+' »',0,'product',id);closeD();await loadSharedData(true);toast('Produit archivé')}catch(e){dbErr(e)}
+}
+
+/* ═══ Retirer produit : archivage sécurisé ou suppression définitive si aucune dépendance ═══ */
+let rmF={q:'',fam:''};
+function prodDependencies(pid){
+  const list=[];
+  const q=qty(pid);if(q>0)list.push(fmt(q)+' en stock');
+  const mvN=DB.movements.filter(m=>m.pid===pid).length;if(mvN)list.push(mvN+' mouvement(s)');
+  const p=P(pid);
+  if(p&&p.recipe&&p.recipe.length)list.push('possède une recette ('+p.recipe.length+' ingrédient(s))');
+  const usedN=usedIn(pid).length;if(usedN)list.push('utilisé dans '+usedN+' recette(s)');
+  const ordN=DB.orders.filter(o=>(o.lines||[]).some(l=>l.pid===pid)).length;if(ordN)list.push(ordN+' commande(s)');
+  const invN=DB.invoices.filter(i=>(i.lines||[]).some(l=>l.pid===pid)).length;if(invN)list.push(invN+' facture(s)');
+  const consN=DB.consultations.filter(c=>(c.items||[]).some(it=>it.pid===pid)).length;if(consN)list.push(consN+' consultation(s)');
+  const purN=DB.purchases.filter(x=>(x.lines||[]).some(l=>l.pid===pid)).length;if(purN)list.push(purN+' achat(s)');
+  const ateN=DB.atelier.filter(o=>o.pid===pid).length;if(ateN)list.push(ateN+' ordre(s) Atelier');
+  const jrN=DB.journal.filter(j=>j.refKind==='product'&&j.refId===pid).length;if(jrN)list.push(jrN+' entrée(s) de Journal');
+  return {list,qty:q};
+}
+function openRemoveProduct(){rmF={q:'',fam:''};renderRemoveModal();}
+function renderRemoveModal(){
+  let l=DB.products.filter(p=>!p.archived);
+  if(rmF.q)l=l.filter(p=>p.name.toLowerCase().includes(rmF.q.toLowerCase()));
+  if(rmF.fam)l=l.filter(p=>p.family===rmF.fam);
+  l.sort((a,b)=>a.name.localeCompare(b.name));
+  let b='<div class="row" style="margin-bottom:10px"><input id="rmQ" placeholder="Rechercher…" value="'+esc(rmF.q)+'" style="flex:1" oninput="rmF.q=this.value;renderRemoveModal();document.getElementById(\'rmQ\').focus()">'+
+   '<select style="width:160px" onchange="rmF.fam=this.value;renderRemoveModal()"><option value="">Toutes familles</option>'+FAM.map(f=>'<option'+(rmF.fam===f?' selected':'')+'>'+f+'</option>').join('')+'</select></div>';
+  b+='<table><thead><tr><th>Produit</th><th>Famille</th><th class="right">Quantité</th><th>Dépendances</th><th class="right">Action</th></tr></thead><tbody>'+
+   (l.map(p=>{
+     const d=prodDependencies(p.id);
+     const dep=d.list.length?d.list.join(', '):'Aucune';
+     const act=d.list.length
+      ?'<button class="b-s" onclick="archProd(\''+p.id+'\');renderRemoveModal()">Archiver</button>'
+      :'<button class="b-s b-r" onclick="confirmDeleteProd(\''+p.id+'\')">Supprimer définitivement</button>';
+     return '<tr><td><b>'+esc(p.name)+'</b></td><td><span class="tag '+FCL[p.family]+'">'+esc(p.family)+'</span></td>'+
+     '<td class="right mono">'+fmt(qty(p.id))+'</td><td class="tiny muted">'+esc(dep)+'</td><td class="right">'+act+'</td></tr>';
+   }).join('')||'<tr><td colspan="5" class="empty">Aucun produit</td></tr>')+'</tbody></table>';
+  openM('- Retirer un produit',b,'<button onclick="closeM()">Fermer</button>',780);
+}
+async function confirmDeleteProd(id){
+  const p=P(id);if(!p)return;
+  if(!ask('Supprimer définitivement « '+p.name+' » ?\n\nCette action est irréversible.'))return;
+  try{const {error}=await SB.from('products').delete().eq('id',id);if(error)throw error;await remoteJournal('Système','Suppression définitive du produit « '+p.name+' »');closeM();await loadSharedData(true);toast('Produit supprimé')}catch(e){dbErr(e)}
+}
+
+function openAdjust(pid,sign){
+  const b='<div class="f"><label>Produit</label><select id="aP" onchange="prevAdjust()">'+prodOpts(pid)+'</select></div>'+
+   '<div class="g g2"><div class="f"><label>Type de mouvement</label><select id="aT">'+opts(MVT,sign<0?'Retrait':'Ajout')+'</select></div>'+
+   '<div class="f"><label>Quantité</label><input id="aQ" value="'+(sign<0?'-1':'1')+'" oninput="prevAdjust()"></div></div>'+
+   '<div class="f"><label>Motif (facultatif)</label><input id="aR" placeholder="ex. récolte, casse, don…"></div>'+
+   '<div class="fiche" id="aPrev"></div>'+
+   '<div class="small muted">Une quantité négative retire du stock. Chaque validation crée une ligne d\'historique : le stock n\'est jamais modifié silencieusement.</div>';
+  openM('± Mouvement de stock',b,'<button class="b-or" onclick="doAdjust()">Valider le mouvement</button><button onclick="closeM()">Annuler</button>',540);
+  prevAdjust();
+}
+function prevAdjust(){
+  const e=document.getElementById('aPrev');if(!e)return;
+  const pid=val('aP'),q=num(val('aQ'));
+  if(!pid){e.innerHTML='<span class="muted small">Choisissez un produit.</span>';return;}
+  const cur=qty(pid),next=cur+q;
+  e.innerHTML='<div class="row" style="justify-content:space-between"><span>'+esc(PN(pid))+'</span>'+
+   '<b class="mono">'+fmt(cur)+' → <span style="color:'+(next<0?'var(--rouge)':'var(--or2)')+'">'+fmt(next)+'</span></b></div>'+
+   (next<0?'<div class="tiny" style="color:var(--rouge);margin-top:4px">Le stock deviendrait négatif.</div>':'');
+}
+async function doAdjust(){
+  const pid=val('aP'),qv=num(val('aQ'));if(!pid||!qv)return toast('Produit et quantité requis');
+  if(qty(pid)+qv<0)return toast('Stock insuffisant : le stock ne peut pas devenir négatif');
+  try{await rpc('fn_stock_adjust',{p_product_id:pid,p_delta:qv,p_type:val('aT'),p_reason:val('aR'),p_ref_kind:'product',p_ref_id:pid});closeM();closeD();await loadSharedData(true);toast('Mouvement enregistré')}catch(e){dbErr(e)}
+}
+
+/* ═══════════ 8. TARIFS ═══════════ */
+/* ═══════════ 8. TARIFS ═══════════ */
+let txF={q:'',fam:''};
+function vTarifs(){
+  document.getElementById('topAct').innerHTML='<button onclick="go(\'stock\')">📦 Ouvrir le stock</button>';
+  let l=DB.products.filter(p=>!p.archived);
+  if(txF.q)l=l.filter(p=>p.name.toLowerCase().includes(txF.q.toLowerCase()));
+  if(txF.fam)l=l.filter(p=>p.family===txF.fam);
+  l.sort((a,b)=>a.family.localeCompare(b.family)||a.name.localeCompare(b.name));
+  const step=num(DB.settings.priceStep)||0.05;
+  const allP=DB.products.filter(x=>!x.archived);
+  const stockValTot=allP.reduce((a,p)=>a+qty(p.id)*num(p.value),0);
+  const coutAchatTot=allP.reduce((a,p)=>a+qty(p.id)*num(p.buyPrice),0);
+  const valVenteTot=allP.reduce((a,p)=>a+qty(p.id)*num(p.sellPrice),0);
+  const margePot=valVenteTot-coutAchatTot;
+  const kpi=(k,v,c)=>'<div class="kpi"><div class="k">'+k+'</div><div class="v" style="'+(c?'color:'+c:'')+'">'+v+'</div></div>';
+  let h='<div class="g g4" style="margin-bottom:10px">'+
+   kpi('Valeur totale du stock',fmt(stockValTot))+
+   kpi('Coût total d\'achat théorique',fmt(coutAchatTot))+
+   kpi('Valeur potentielle de vente',fmt(valVenteTot))+
+   kpi('Marge potentielle théorique',fmt(margePot),margePot>=0?'var(--vert)':'var(--rouge)')+
+   '</div>';
+  h+='<div class="pan pad row" style="margin-bottom:10px">'+
+   '<input id="tq" placeholder="Rechercher…" value="'+esc(txF.q)+'" style="flex:1;min-width:170px" oninput="txF.q=this.value;vTarifs();document.getElementById(\'tq\').focus()">'+
+   '<select style="width:155px" onchange="txF.fam=this.value;vTarifs()"><option value="">Toutes familles</option>'+FAM.map(f=>'<option'+(txF.fam===f?' selected':'')+'>'+f+'</option>').join('')+'</select>'+
+   '<span class="muted small">Pas d\'incrément</span>'+
+   '<select style="width:80px" onchange="DB.settings.priceStep=num(this.value);save();vTarifs()">'+
+    [0.05,0.1,0.2,0.25,0.5,1,5,10].map(s=>'<option value="'+s+'"'+(step===s?' selected':'')+'>'+fmt(s)+'</option>').join('')+'</select>'+
+   '<div style="flex:1"></div><span class="muted small">'+l.length+' référence(s) — même fiche que le stock</span></div>';
+  h+='<div class="pan"><div class="ph">🏷 Tarifs<div class="sp"></div><span class="tiny muted">Modifier un prix ne touche jamais à la quantité. Les valeurs ci-dessus sont théoriques, pas le chiffre d\'affaires réellement encaissé.</span></div>'+
+   '<table><thead><tr><th>Produit</th><th>Famille</th><th class="right">Qté</th><th class="right" style="width:145px">Valeur</th><th class="right" style="width:145px">Prix achat</th><th class="right" style="width:145px">Prix vente</th><th class="right">Marge</th><th class="right">Marge %</th></tr></thead><tbody>';
+  h+=l.map(p=>{
+    const marge=num(p.sellPrice)-num(p.buyPrice);
+    const margePct=num(p.buyPrice)>0?(marge/num(p.buyPrice)*100):null;
+    const cell=(f)=>'<td class="right"><div class="pxc">'+
+      '<button class="b-i" onclick="txAdj(\''+p.id+'\',\''+f+'\',-'+step+')">−</button>'+
+      '<input value="'+fmt(p[f])+'" onchange="txSet(\''+p.id+'\',\''+f+'\',this.value)">'+
+      '<button class="b-i" onclick="txAdj(\''+p.id+'\',\''+f+'\','+step+')">+</button></div></td>';
+    return '<tr><td class="clk" onclick="openProd(\''+p.id+'\')"><b>'+esc(p.name)+'</b></td>'+
+    '<td><span class="tag '+FCL[p.family]+'">'+esc(p.family)+'</span></td>'+
+    '<td class="right mono muted">'+fmt(qty(p.id))+'</td>'+
+    cell('value')+cell('buyPrice')+cell('sellPrice')+
+    '<td class="right mono" style="color:'+(marge>0?'var(--vert)':marge<0?'var(--rouge)':'var(--tx2)')+'">'+(marge?fmt(marge):'—')+'</td>'+
+    '<td class="right mono muted small">'+(margePct===null?'Non calculable':fmt(margePct)+' %')+'</td></tr>';
+  }).join('')||'<tr><td colspan="8" class="empty">Aucun produit</td></tr>';
+  h+='</tbody></table></div>';
+  document.getElementById('view').innerHTML=h;
+}
+async function txSet(pid,field,v){
+  const p=P(pid);if(!p)return;const map={value:'value',buyPrice:'buy_price',sellPrice:'sell_price'};try{const {error}=await SB.from('products').update({[map[field]]:Math.max(0,num(v)),updated_by:currentUserId()}).eq('id',pid);if(error)throw error;await loadSharedData(false);vTarifs()}catch(e){dbErr(e)}}
+async function txAdj(pid,field,d){const p=P(pid);if(!p)return;return txSet(pid,field,num(p[field])+num(d))}
+
+/* ═══════════ 9. RECETTES / PRODUCTION ═══════════ */
+function recipePanel(p){
+  let h='<div id="recLines">'+p.recipe.map((l,i)=>recLine(l,i)).join('')+'</div>';
+  h+='<button class="b-s" onclick="addRecLine()">+ Ingrédient</button> <button class="b-s b-or" onclick="saveRecipe(\''+p.id+'\')">Enregistrer la recette</button>';
+  if(p.recipe.length){
+    h+='<div class="sep"></div><div class="row"><input id="prodN" value="1" style="width:76px"><button class="b-or" onclick="openProduce(\''+p.id+'\')">⚗ Produire</button>'+
+    '<span class="muted small">Calcule les besoins, déduit les ingrédients, ajoute les produits.</span></div>';
+  }
+  return h;
+}
+function recLine(l,i){
+  return '<div class="row rec" style="margin-bottom:5px;flex-wrap:nowrap"><select class="rp" style="flex:1">'+prodOpts(l?l.pid:'')+'</select>'+
+    '<input class="rq" value="'+(l?fmt(l.qty):1)+'" style="width:70px;text-align:center">'+
+    '<button class="b-i b-r" onclick="this.parentElement.remove()">✕</button></div>';
+}
+function addRecLine(){document.getElementById('recLines').insertAdjacentHTML('beforeend',recLine(null));}
+async function saveRecipe(id){
+  const p=P(id),lines=[];document.querySelectorAll('#recLines .rec').forEach(d=>{const pid=d.querySelector('.rp').value,qv=num(d.querySelector('.rq').value);if(pid&&qv>0)lines.push({ingredient_id:pid,qty:qv})});
+  if(!lines.length)return toast('Ajoutez au moins un ingrédient');
+  try{await rpc('fn_save_recipe',{p_product_id:id,p_yield_qty:p.recipeYield||1,p_notes:p.recipeNotes||'',p_lines:lines});await loadSharedData(true);toast('Recette enregistrée')}catch(e){dbErr(e)}
+}
+function usedPanel(p){
+  const u=usedIn(p.id);
+  if(!u.length)return '<div class="empty">Ce produit n\'entre dans aucune recette.</div>';
+  return '<table><tbody>'+u.map(x=>'<tr class="clk" onclick="openProd(\''+x.p.id+'\')"><td><span class="tag '+FCL[x.p.family]+'">'+esc(x.p.family)+'</span></td><td>'+esc(x.p.name)+'</td><td class="right mono">×'+fmt(x.qty)+'</td></tr>').join('')+'</tbody></table>';
+}
+function vRecipes(){
+  document.getElementById('topAct').innerHTML='<button class="b-or" onclick="openProduce()">⚗ Lancer une production</button>';
+  const l=DB.products.filter(p=>!p.archived&&p.recipe.length);
+  let h='<div class="g g2">';
+  h+='<div class="pan"><div class="ph">Produits fabricables ('+l.length+')</div><table><thead><tr><th>Produit</th><th class="right">En stock</th><th class="right">Réalisables</th><th></th></tr></thead><tbody>'+
+   (l.map(p=>{
+     const mx=Math.min.apply(null,p.recipe.map(r=>Math.floor(qty(r.pid)/num(r.qty))).concat([9999]));
+     return '<tr class="clk" onclick="openProd(\''+p.id+'\')"><td><b>'+esc(p.name)+'</b><div class="tiny muted">'+p.recipe.map(r=>esc(PN(r.pid))+' ×'+fmt(r.qty)).join(', ')+'</div></td>'+
+     '<td class="right mono muted">'+fmt(qty(p.id))+'</td><td class="right mono" style="color:'+(mx>0?'var(--vert)':'var(--rouge)')+'"><b>'+(mx===9999?'∞':mx)+'</b></td>'+
+     '<td class="right"><button class="b-s b-or" onclick="event.stopPropagation();openProduce(\''+p.id+'\')">Produire</button> <button class="b-s" onclick="event.stopPropagation();sendToAtelier(\''+p.id+'\')">Envoyer à l\'Atelier</button></td></tr>';
+   }).join('')||'<tr><td colspan="4" class="empty">Aucune recette définie</td></tr>')+'</tbody></table></div>';
+  h+='<div class="pan"><div class="ph">Ingrédients les plus sollicités</div>'+ingUsage()+'</div></div>';
+  document.getElementById('view').innerHTML=h;
+}
+function ingUsage(){
+  const m={};
+  DB.products.forEach(p=>p.recipe.forEach(r=>{m[r.pid]=(m[r.pid]||0)+1;}));
+  const l=Object.keys(m).sort((a,b)=>m[b]-m[a]);
+  if(!l.length)return'<div class="empty">—</div>';
+  return '<table><tbody>'+l.map(pid=>'<tr class="clk" onclick="openProd(\''+pid+'\')"><td>'+esc(PN(pid))+'</td><td class="tiny muted">'+m[pid]+' recette(s)</td><td class="right mono" style="color:'+(qty(pid)>0?'var(--tx)':'var(--rouge)')+'">'+fmt(qty(pid))+'</td></tr>').join('')+'</tbody></table>';
+}
+function openProduce(pid){
+  const n=pid&&document.getElementById('prodN')?num(document.getElementById('prodN').value)||1:1;
+  const b='<div class="g g2"><div class="f"><label>Produit à fabriquer</label><select id="fP" onchange="calcProd()">'+
+    '<option value="">— choisir —</option>'+DB.products.filter(p=>!p.archived&&p.recipe.length).map(p=>'<option value="'+p.id+'"'+(p.id===pid?' selected':'')+'>'+esc(p.name)+'</option>').join('')+'</select></div>'+
+    '<div class="f"><label>Quantité à produire</label><input id="fN" value="'+n+'" oninput="calcProd()"></div></div>'+
+    '<div id="fCalc"></div>';
+  openM('⚗ Production',b,'<button class="b-or" id="fBtn" onclick="doProduce()">Lancer la production</button><button onclick="closeM()">Annuler</button>',620);
+  calcProd();
+}
+function calcProd(){
+  const pid=val('fP'),n=Math.max(0,num(val('fN')));
+  const box=document.getElementById('fCalc');if(!box)return;
+  if(!pid||!n){box.innerHTML='<div class="empty">Choisissez un produit et une quantité.</div>';return;}
+  const rows=needs(pid,n),miss=rows.filter(r=>r.miss>0);
+  box.innerHTML='<div class="sep"></div><table><thead><tr><th>Ingrédient</th><th class="right">Nécessaire</th><th class="right">Disponible</th><th class="right">Manquant</th></tr></thead><tbody>'+
+   rows.map(r=>'<tr><td>'+esc(r.name)+'</td><td class="right mono">'+fmt(r.need)+'</td><td class="right mono">'+fmt(r.av)+'</td>'+
+   '<td class="right mono" style="color:'+(r.miss>0?'var(--rouge)':'var(--vert)')+'"><b>'+fmt(r.miss)+'</b></td></tr>').join('')+'</tbody></table>'+
+   (miss.length?'<div class="fiche" style="border-color:var(--rouge);margin-top:9px"><b style="color:var(--rouge)">Ingrédients insuffisants</b><div class="small">'+miss.map(m=>esc(m.name)+' : il manque <b>'+fmt(m.miss)+'</b>').join('<br>')+'</div></div>'
+   :'<div class="fiche" style="border-color:var(--vert);margin-top:9px"><b style="color:var(--vert)">✓ Tous les ingrédients sont disponibles.</b></div>');
+}
+async function doProduce(){
+  const pid=val('fP'),n=Math.max(0,num(val('fN')));if(!pid||!n)return toast('Produit et quantité requis');
+  try{const res=await rpc('fn_craft_produce',{p_product_id:pid,p_output_qty:n,p_atelier_order_id:null,p_source:'Recettes'});if(!res||!res.ok)return toast('Ingrédients insuffisants');closeM();closeD();await loadSharedData(true);toast(n+'× '+PN(pid)+' produit(s)')}catch(e){dbErr(e)}
+}
+async function sendToAtelier(pid,qty0,orderRef){
+  const qv=qty0||prompt('Quantité à envoyer en Atelier pour « '+PN(pid)+' » :','1');const n=num(qv);if(!n||n<=0)return null;
+  try{const o=await rpc('fn_create_atelier_order',{p_product_id:pid,p_qty:n,p_alchimiste:DB.settings.practitioner||CURRENT_PROFILE?.nom_affiche||'',p_order_ref:orderRef||null});await loadSharedData(true);toast('Ordre '+o.num+' envoyé à l\'Atelier');return DB.atelier.find(x=>x.id===o.id)||o}catch(e){dbErr(e);return null}
+}
+
+/* ═══════════ 9b. ATELIER (moteur commun avec Recettes) ═══════════ */
+/* ═══════════ 9b. ATELIER (moteur commun avec Recettes) ═══════════ */
+let atF={bucket:'active',alch:'',mine:false};
+function atInBucket(o,b){
+  if(b==='active')return o.status==='En attente'||o.status==='En cours';
+  if(b==='attente')return o.status==='En attente';
+  if(b==='cours')return o.status==='En cours';
+  if(b==='termine')return o.status==='Terminé';
+  if(b==='annule')return o.status==='Annulée'||o.status==='Impossible';
+  return true;
+}
+function vAtelier(){
+  document.getElementById('topAct').innerHTML='<button class="b-or" onclick="openNewAtelier()">+ Nouvel ordre</button>';
+  const all=DB.atelier;
+  const counts={active:0,attente:0,cours:0,termine:0,annule:0,all:all.length};
+  all.forEach(o=>{['active','attente','cours','termine','annule'].forEach(b=>{if(atInBucket(o,b))counts[b]++;});});
+  const alchs=[...new Set(all.map(o=>o.alchimiste).filter(Boolean))];
+
+  let l=all.filter(o=>atInBucket(o,atF.bucket));
+  if(atF.alch)l=l.filter(o=>o.alchimiste===atF.alch);
+  if(atF.mine)l=l.filter(o=>o.alchimiste===DB.settings.practitioner);
+  l=l.slice().sort((a,b)=>b.ts-a.ts);
+
+  const chip=(b,label)=>'<button class="'+(atF.bucket===b?'b-or':'')+'" onclick="atF.bucket=\''+b+'\';vAtelier()">'+label+' <span class="tag t-n" style="margin-left:4px">'+counts[b]+'</span></button>';
+
+  let h='<div class="row" style="margin-bottom:10px;justify-content:space-between">';
+  h+='<div class="row">'+chip('active','Actifs')+chip('attente','En attente')+chip('cours','En cours')+chip('termine','Terminés')+chip('annule','Annulés')+chip('all','Tous')+'</div>';
+  h+='<div class="row">';
+  h+='<select style="width:170px" onchange="atF.alch=this.value;vAtelier()"><option value="">Tous les alchimistes</option>'+alchs.map(a=>'<option'+(atF.alch===a?' selected':'')+'>'+esc(a)+'</option>').join('')+'</select>';
+  h+='<button class="'+(atF.mine?'b-or':'')+'" onclick="atF.mine=!atF.mine;vAtelier()">Mes OF</button>';
+  h+='</div></div>';
+
+  h+='<div class="pan"><table><thead><tr><th style="width:26px"></th><th style="width:26px"></th><th>N°</th><th>Objet</th><th class="right">Qté</th><th>Statut</th><th>Faisable</th><th>Alchimiste</th><th>Créé</th><th class="right">Actions</th></tr></thead><tbody>';
+  if(!l.length)h+='<tr><td colspan="10" class="empty">Aucun ordre dans cette vue</td></tr>';
+  l.forEach(o=>{
+    const rows=needs(o.pid,o.qty),miss=rows.filter(r=>r.miss>0);
+    const cost=rows.reduce((a,r)=>{const ip=P(r.pid);return a+(ip?num(ip.buyPrice):0)*r.need;},0);
+    const feasible=miss.length===0;
+    const canAct=(o.status==='En attente'||o.status==='En cours'||o.status==='Impossible');
+    let act='';
+    if(canAct){
+      if(o.status==='En attente')act+='<button class="b-s" onclick="event.stopPropagation();setAtelierStatus(\''+o.id+'\',\'En cours\')">Démarrer</button> ';
+      act+='<button class="b-s b-or" onclick="event.stopPropagation();launchAtelier(\''+o.id+'\')">Fabriquer</button> ';
+      act+='<button class="b-s b-r" onclick="event.stopPropagation();cancelAtelier(\''+o.id+'\')">Annuler</button>';
+    }
+    h+='<tr class="clk" onclick="toggleAt(\''+o.id+'\')">'+
+      '<td><input type="checkbox" onclick="event.stopPropagation()"></td>'+
+      '<td id="chev-'+o.id+'" style="color:var(--tx2)">▸</td>'+
+      '<td><b>'+esc(o.num)+'</b></td>'+
+      '<td><span class="tag '+FCL[P(o.pid)?P(o.pid).family:'Autre']+'">'+esc(PN(o.pid))+'</span></td>'+
+      '<td class="right mono">'+fmt(o.qty)+'</td>'+
+      '<td>'+atStatusTag(o.status)+'</td>'+
+      '<td>'+(feasible?'<span style="color:var(--vert)">✓ oui</span>':'<span style="color:var(--rouge)">✗ manque '+miss.length+'</span>')+'</td>'+
+      '<td class="muted">'+(o.alchimiste?esc(o.alchimiste):'—')+'</td>'+
+      '<td class="tiny muted">'+dt(o.ts)+'</td>'+
+      '<td class="right" style="white-space:nowrap">'+act+(o.orderRef&&DB.orders.find(x=>x.id===o.orderRef)?' <button class="b-i" title="Voir la commande" onclick="event.stopPropagation();editOrder(\''+o.orderRef+'\')">📜</button>':'')+'</td></tr>';
+    h+='<tr id="det-'+o.id+'" style="display:none"><td></td><td colspan="9" style="padding:0">'+
+      '<div style="background:#100c08;padding:10px 14px;border-bottom:1px solid var(--line)">'+
+      '<div class="row" style="justify-content:space-between;margin-bottom:6px"><b class="tiny" style="color:var(--tx2);letter-spacing:.4px">RECETTE — CE QUE LA FABRICATION VA CONSOMMER</b><span class="small">Coût de revient : <b style="color:var(--or2)">'+sp(cost)+'</b></span></div>'+
+      '<table><tbody>'+
+       '<tr><td><span class="tag '+FCL[P(o.pid)?P(o.pid).family:'Autre']+'">'+fmt(o.qty)+'×</span> '+esc(PN(o.pid))+'</td><td class="right"><span class="tag t-w">'+fmt(o.qty)+' à fabriquer</span></td><td class="right mono muted" style="width:110px">'+sp(cost)+'</td></tr>'+
+       rows.map(r=>{
+         const ip=P(r.pid),lineCost=(ip?num(ip.buyPrice):0)*r.need;
+         return '<tr><td style="padding-left:22px">'+fmt(r.need)+'× '+esc(r.name)+'</td>'+
+         '<td class="right">'+(r.miss>0?'<span class="tag t-d">'+fmt(r.miss)+' manquant</span>':'<span class="tag t-ok">'+fmt(r.av)+' du stock</span>')+'</td>'+
+         '<td class="right mono muted" style="width:110px">'+sp(lineCost)+'</td></tr>';
+       }).join('')+
+      '</tbody></table>'+
+      '<div class="tiny muted" style="margin-top:6px;font-style:italic">Simulé sur le stock actuel — un rachat ou une vente entre-temps peut changer ce tableau.</div>'+
+      (miss.length?'<button class="b-s" style="margin-top:8px" onclick="prepAchatFromAtelier(\''+o.id+'\')">🛒 Préparer un achat pour le manquant</button>':'')+
+      '</div></td></tr>';
+  });
+  h+='</tbody></table></div>';
+  h+='<div class="small muted" style="margin-top:8px">1–'+l.length+' sur '+l.length+'</div>';
+  document.getElementById('view').innerHTML=h;
+}
+function toggleAt(id){
+  const row=document.getElementById('det-'+id),chev=document.getElementById('chev-'+id);
+  if(!row)return;
+  const open=row.style.display!=='none';
+  row.style.display=open?'none':'table-row';
+  chev.textContent=open?'▸':'▾';
+}
+async function setAtelierStatus(id,st){
+  try{const {error}=await SB.from('atelier_orders').update({status:st}).eq('id',id);if(error)throw error;await remoteJournal('Atelier',(DB.atelier.find(x=>x.id===id)?.num||'Ordre')+' → '+st,0,'atelier',id);await loadSharedData(true);toast('Statut mis à jour')}catch(e){dbErr(e)}
+}
+function atStatusTag(s){
+  const m={'En attente':'t-n','En cours':'t-b','Terminé':'t-ok','Impossible':'t-d','Annulée':'t-d'};
+  return '<span class="tag '+(m[s]||'t-n')+'">'+esc(s)+'</span>';
+}
+function openNewAtelier(){
+  const b='<div class="f"><label>Produit à fabriquer</label><select id="naP">'+
+   '<option value="">— choisir —</option>'+DB.products.filter(p=>!p.archived&&p.recipe.length).map(p=>'<option value="'+p.id+'">'+esc(p.name)+'</option>').join('')+'</select></div>'+
+   '<div class="g g2"><div class="f"><label>Quantité</label><input id="naQ" value="1"></div>'+
+   '<div class="f"><label>Alchimiste</label><input id="naA" value="'+esc(DB.settings.practitioner||'')+'"></div></div>';
+  openM('+ Nouvel ordre Atelier',b,'<button class="b-or" onclick="confirmNewAtelier()">Créer l\'ordre</button><button onclick="closeM()">Annuler</button>',480);
+}
+async function confirmNewAtelier(){
+  const pid=val('naP'),n=num(val('naQ')),alch=val('naA');if(!pid||!n)return toast('Produit et quantité requis');closeM();
+  try{const o=await rpc('fn_create_atelier_order',{p_product_id:pid,p_qty:n,p_alchimiste:alch||'',p_order_ref:null});await loadSharedData(true);toast('Ordre '+o.num+' créé')}catch(e){dbErr(e)}
+}
+function openAtelier(id){
+  go('atelier');
+  setTimeout(()=>{const row=document.getElementById('det-'+id);if(row){toggleAt(id);row.scrollIntoView({block:'center'});}},60);
+}
+async function launchAtelier(id){
+  const o=DB.atelier.find(x=>x.id===id);if(!o)return;if(o.status==='Terminé')return toast('Cet ordre a déjà été fabriqué');
+  try{const res=await rpc('fn_craft_produce',{p_product_id:o.pid,p_output_qty:o.qty,p_atelier_order_id:o.id,p_source:'Atelier'});if(!res||!res.ok){await SB.from('atelier_orders').update({status:'Impossible'}).eq('id',id);await loadSharedData(true);return toast('Ingrédients insuffisants')};await loadSharedData(true);toast('Ordre '+o.num+' terminé')}catch(e){dbErr(e)}
+}
+async function cancelAtelier(id){
+  if(!ask('Annuler cet ordre de fabrication ?'))return;const o=DB.atelier.find(x=>x.id===id);if(!o)return;if(o.status==='Terminé')return toast('Un ordre terminé ne peut plus être annulé');
+  try{const {error}=await SB.from('atelier_orders').update({status:'Annulée'}).eq('id',id);if(error)throw error;await remoteJournal('Atelier','Ordre '+o.num+' annulé',0,'atelier',id);await loadSharedData(true);toast('Ordre annulé')}catch(e){dbErr(e)}
+}
+function prepAchatFromAtelier(id){
+  const o=DB.atelier.find(x=>x.id===id);if(!o)return;
+  const rows=needs(o.pid,o.qty).filter(r=>r.miss>0);
+  if(!rows.length)return toast('Aucun ingrédient manquant');
+  editPurch();
+  setTimeout(()=>{
+    const box=document.getElementById('puLines');box.innerHTML='';
+    rows.forEach(r=>{const p=P(r.pid);box.insertAdjacentHTML('beforeend',purLine({pid:r.pid,qty:r.miss,unit:p?p.buyPrice:0}));});
+    calcPur();
+  },50);
+}
+
+/* ═══════════ 10. PATIENTS ═══════════ */
+let patQ='';
+function vPatients(){
+  document.getElementById('topAct').innerHTML='<button class="b-or" onclick="editPat()">+ Nouveau patient</button>';
+  let l=DB.patients.filter(p=>!p.archived);
+  if(patQ)l=l.filter(p=>(p.name+' '+p.nickname+' '+p.race+' '+p.job).toLowerCase().includes(patQ.toLowerCase()));
+  l.sort((a,b)=>a.name.localeCompare(b.name));
+  let h='<div class="pan pad row" style="margin-bottom:10px"><input id="pq" placeholder="Rechercher un patient…" value="'+esc(patQ)+'" style="flex:1" oninput="patQ=this.value;vPatients();document.getElementById(\'pq\').focus()"><span class="muted small">'+l.length+' patient(s)</span></div>';
+  h+='<div class="pan"><table><thead><tr><th>Nom</th><th>Race</th><th>Sexe</th><th>Âge</th><th>Profession</th><th class="right">Consult.</th><th class="right">Dû</th><th>Dernière visite</th></tr></thead><tbody>';
+  h+=l.map(p=>{
+    const cs=DB.consultations.filter(c=>c.patientId===p.id);
+    const du=patientDue(p.id);
+    return '<tr><td class="clk" onclick="openPat(\''+p.id+'\')"><b>'+esc(p.name)+'</b>'+(p.nickname?'<span class="muted small"> « '+esc(p.nickname)+' »</span>':'')+(p.dead?' <span class="tag t-d">décédé</span>':'')+'</td>'+
+    '<td class="clk" onclick="openPat(\''+p.id+'\')">'+esc(p.race||'—')+'</td><td class="clk" onclick="openPat(\''+p.id+'\')">'+esc(p.sex||'—')+'</td><td class="mono clk" onclick="openPat(\''+p.id+'\')">'+esc(p.age||'—')+'</td><td class="muted clk" onclick="openPat(\''+p.id+'\')">'+esc(p.job||'—')+'</td>'+
+    '<td class="right mono clk" onclick="openPat(\''+p.id+'\')">'+cs.length+'</td>'+
+    '<td class="right mono" style="color:'+(du>0?'var(--jaune)':'var(--tx2)')+';cursor:'+(du>0?'pointer':'default')+'" '+(du>0?'onclick="showPatientDebts(\''+p.id+'\')"':'')+'>'+(du>0?fmt(du):'—')+'</td>'+
+    '<td class="muted small clk" onclick="openPat(\''+p.id+'\')">'+(cs.length?dOnly(cs[0].ts):'—')+'</td></tr>';
+  }).join('')||'<tr><td colspan="8" class="empty">Aucun patient enregistré</td></tr>';
+  h+='</tbody></table></div>';
+  document.getElementById('view').innerHTML=h;
+}
+function editPat(id){
+  const p=id?PAT(id):null;
+  const n=p||{name:'',nickname:'',sex:'',race:'',age:'',job:'',notes:'',dead:false};
+  const b='<div class="g g2"><div class="f"><label>Nom</label><input id="ptN" value="'+esc(n.name)+'"></div>'+
+   '<div class="f"><label>Surnom</label><input id="ptS" value="'+esc(n.nickname)+'"></div>'+
+   '<div class="f"><label>Sexe</label><select id="ptX">'+opts(['','Homme','Femme','Autre'],n.sex)+'</select></div>'+
+   '<div class="f"><label>Race</label><select id="ptR">'+opts(['','Nordique','Impérial','Bréton','Rougegarde','Elfe des bois','Haut-elfe','Elfe noir','Orque','Khajiit','Argonien','Autre'],n.race)+'</select></div>'+
+   '<div class="f"><label>Âge approximatif</label><input id="ptA" value="'+esc(n.age)+'"></div>'+
+   '<div class="f"><label>Profession</label><input id="ptJ" value="'+esc(n.job)+'"></div></div>'+
+   '<div class="f"><label>Notes générales</label><textarea id="ptNo" rows="4">'+esc(n.notes)+'</textarea></div>'+
+   '<label class="chk"><input type="checkbox" id="ptD" '+(n.dead?'checked':'')+'>Patient décédé</label>';
+  openM((p?'☥ ':'+ ')+esc(p?p.name:'Nouveau patient'),b,'<button class="b-or" onclick="savePat(\''+(p?p.id:'')+'\')">Enregistrer</button><button onclick="closeM()">Annuler</button>',620);
+}
+async function savePat(id){
+  const name=val('ptN').trim();if(!name)return toast('Le nom est obligatoire');
+  const payload={name,nickname:val('ptS'),sex:val('ptX'),race:val('ptR'),age:val('ptA'),job:val('ptJ'),notes:val('ptNo'),dead:chk('ptD')};
+  try{let pid=id;if(id){const {error}=await SB.from('patients').update(payload).eq('id',id);if(error)throw error}else{payload.archived=false;payload.created_by=currentUserId();const {data,error}=await SB.from('patients').insert(payload).select('id').single();if(error)throw error;pid=data.id}await remoteJournal('Patient',(id?'Mise à jour du dossier ':'Création du dossier ')+name,0,'patient',pid);closeM();await loadSharedData(true);toast('Dossier enregistré')}catch(e){dbErr(e)}
+}
+function openPat(id){
+  const p=PAT(id);if(!p)return;
+  const cs=DB.consultations.filter(c=>c.patientId===id).sort((a,b)=>b.ts-a.ts);
+  const iv=DB.invoices.filter(i=>i.patientId===id).sort((a,b)=>b.ts-a.ts);
+  let b='<div class="fiche"><div class="row"><b style="font-size:15px">'+esc(p.name)+'</b>'+(p.dead?'<span class="tag t-d">décédé</span>':'')+'</div>'+
+   '<div class="small muted">'+[p.nickname&&'« '+esc(p.nickname)+' »',p.race,p.sex,p.age&&p.age+' ans',p.job].filter(Boolean).join(' · ')+'</div>'+
+   (p.notes?'<div class="sep"></div><div class="small">'+esc(p.notes).replace(/\n/g,'<br>')+'</div>':'')+'</div>';
+  b+='<div class="row" style="margin-bottom:10px"><button class="b-or" onclick="editConsult(null,\''+id+'\')">✚ Nouvelle consultation</button><button onclick="editPat(\''+id+'\')">Modifier la fiche</button></div>';
+  b+='<div class="small muted" style="margin-bottom:6px">Chronologie du dossier ('+cs.length+' consultation(s))</div><div class="tl">';
+  const ev=cs.map(c=>({ts:c.ts,h:'<b>Consultation</b> — '+esc(c.motif||c.type||'—')+'<div class="tiny muted">'+esc(c.practitioner||'')+' · '+sp(c.price)+'</div>'+(c.diagnosis?'<div class="small">Dx : '+esc(c.diagnosis)+'</div>':''),cid:c.id}))
+   .concat(iv.map(i=>({ts:i.ts,h:'<b>Facture '+esc(i.num)+'</b> — '+sp(invTotal(i))+' '+invStatusTag(i.status),iid:i.id})))
+   .sort((a,b2)=>b2.ts-a.ts);
+  b+=ev.length?ev.map(e=>'<div class="it" '+(e.cid?'style="cursor:pointer" onclick="editConsult(\''+e.cid+'\')"':e.iid?'style="cursor:pointer" onclick="editInv(\''+e.iid+'\')"':'')+'><div class="tiny muted">'+dt(e.ts)+'</div>'+e.h+'</div>').join(''):'<div class="empty">Dossier vierge</div>';
+  b+='</div>';
+  openD('☥ '+esc(p.name),b,'<button onclick="editPat(\''+id+'\')">Modifier</button><div style="flex:1"></div><button class="b-r" onclick="archPat(\''+id+'\')">Archiver</button>');
+}
+async function archPat(id){if(!ask('Archiver ce dossier patient ?'))return;try{const {error}=await SB.from('patients').update({archived:true}).eq('id',id);if(error)throw error;closeD();await loadSharedData(true);toast('Dossier archivé')}catch(e){dbErr(e)}}
+function showPatientDebts(pid){
+  const l=patientInvoices(pid).filter(i=>invRemain(i)>0);
+  const b=l.length?'<table><tbody>'+l.map(i=>'<tr class="clk" onclick="closeD();editInv(\''+i.id+'\')"><td><b>'+esc(i.num)+'</b></td><td class="small muted">'+dOnly(i.ts)+'</td><td class="right mono">'+fmt(invTotal(i))+'</td><td class="right mono" style="color:var(--jaune)">'+fmt(invRemain(i))+'</td></tr>').join('')+'</tbody></table>':'<div class="empty">Aucune facture due</div>';
+  openD('Factures dues — '+esc(patName(pid)),b,'');
+}
+
+/* ═══════════ 11. CONSULTATIONS ═══════════ */
+let conQ='';
+function vConsult(){
+  document.getElementById('topAct').innerHTML='<button class="b-or" onclick="editConsult()">+ Nouvelle consultation</button>';
+  let l=DB.consultations.slice().sort((a,b)=>b.ts-a.ts);
+  if(conQ)l=l.filter(c=>(patName(c.patientId)+' '+c.motif+' '+c.diagnosis).toLowerCase().includes(conQ.toLowerCase()));
+  let h='<div class="pan pad row" style="margin-bottom:10px"><input id="cq2" placeholder="Rechercher (patient, motif, diagnostic)…" value="'+esc(conQ)+'" style="flex:1" oninput="conQ=this.value;vConsult();document.getElementById(\'cq2\').focus()"><span class="muted small">'+l.length+' consultation(s)</span></div>';
+  h+='<div class="pan"><table><thead><tr><th>Date</th><th>Patient</th><th>Prise en charge</th><th>Motif</th><th>Praticien</th><th class="right">Montant</th><th>Paiement</th><th></th></tr></thead><tbody>';
+  h+=l.map(c=>'<tr class="clk" onclick="editConsult(\''+c.id+'\')"><td class="small muted">'+dt(c.ts)+'</td>'+
+   '<td><b>'+esc(patName(c.patientId))+'</b></td><td><span class="tag t-b">'+esc(c.service||'—')+'</span></td>'+
+   '<td>'+esc(c.motif||'—')+'</td><td class="muted">'+esc(c.practitioner||'—')+'</td>'+
+   '<td class="right mono">'+fmt(c.price)+'</td>'+
+   '<td>'+(c.paid?'<span class="tag t-ok">réglé</span>':'<span class="tag t-w">dû</span>')+'</td>'+
+   '<td class="right"><button class="b-i" onclick="event.stopPropagation();exportReport(\''+c.id+'\')">📄</button></td></tr>').join('')||'<tr><td colspan="8" class="empty">Aucune consultation</td></tr>';
+  h+='</tbody></table></div>';
+  document.getElementById('view').innerHTML=h;
+}
+function editConsult(id,patientId){
+  const c=id?DB.consultations.find(x=>x.id===id):null;
+  const n=c||{patientId:patientId||'',practitioner:DB.settings.practitioner,ts:Date.now(),service:'Médecine générale',type:'Consultation classique',motif:'',
+    price:DB.settings.consultPrice,paid:false,symptoms:'',observations:'',diagnosis:'',exams:'',injuries:'',state:'',
+    care:'',meds:'',reco:'',treatment:'',followup:'',items:[],addItems:DB.settings.addProductsToConsult,invoiceId:''};
+  const d=new Date(n.ts);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());
+  let b='<div class="tabs"><span class="on" onclick="cTab(this,\'cf1\')">Général</span><span onclick="cTab(this,\'cf2\')">Diagnostic</span><span onclick="cTab(this,\'cf3\')">Traitement</span><span onclick="cTab(this,\'cf4\')">Produits &amp; prix</span></div>';
+  b+='<div id="cf1"><div class="g g2">'+
+   '<div class="f"><label>Patient</label><div class="row" style="flex-wrap:nowrap"><select id="cPat" style="flex:1">'+patOpts(n.patientId)+'</select><button class="b-s" onclick="quickPat()">+</button></div></div>'+
+   '<div class="f"><label>Praticien</label><input id="cPra" value="'+esc(n.practitioner)+'"></div>'+
+   '<div class="f"><label>Intervention (date et heure)</label><input type="datetime-local" id="cDate" value="'+d.toISOString().slice(0,16)+'"></div>'+
+   '<div class="f"><label>Prise en charge</label><select id="cServ">'+opts(['Médecine générale','Urgence','Chirurgie','Psychiatrie','Alchimie','Visite à domicile'],n.service)+'</select></div>'+
+   '<div class="f"><label>Type de consultation</label><select id="cType">'+opts(['Consultation classique','Urgence','Suivi','Visite médicale','Aptitude','Grossesse','Chirurgie','Soins à domicile'],n.type)+'</select></div>'+
+   '<div class="f"><label>Motif</label><input id="cMotif" value="'+esc(n.motif)+'" placeholder="Traumatisme / Plaie / Fièvre…"></div>'+
+   '</div></div>';
+  b+='<div id="cf2" style="display:none">'+
+   ta('Symptômes','cSym',n.symptoms,3)+ta('Observations','cObs',n.observations,3)+ta('Diagnostic','cDx',n.diagnosis,3)+
+   ta('Résultats d\'examens','cEx',n.exams,3)+ta('Blessures constatées','cInj',n.injuries,2)+
+   '<div class="f"><label>État général</label><select id="cSt">'+opts(['','Bon','Stable','Affaibli','Critique','Inconscient','Décédé'],n.state)+'</select></div></div>';
+  b+='<div id="cf3" style="display:none">'+
+   ta('Soins effectués','cCare',n.care,4)+ta('Médicaments / potions administrés','cMeds',n.meds,3)+
+   ta('Traitement prescrit','cTr',n.treatment,3)+ta('Recommandations','cReco',n.reco,3)+ta('Suivi nécessaire','cFu',n.followup,2)+'</div>';
+  b+='<div id="cf4" style="display:none">'+
+   '<div class="small muted" style="margin-bottom:7px">Les produits listés seront déduits du stock à l\'enregistrement (une seule fois).</div>'+
+   '<div id="cItems">'+(n.items||[]).map(it=>consItem(it)).join('')+'</div>'+
+   '<button class="b-s" onclick="addConsItem()">+ Produit utilisé</button> <button class="b-s" onclick="cartToConsult()">🧺 Depuis le panier</button>'+
+   '<div class="sep"></div>'+
+   '<label class="chk" style="margin-bottom:8px"><input type="checkbox" id="cAdd" '+(n.addItems?'checked':'')+' onchange="calcCons()">Ajouter le prix des produits au tarif de la consultation</label>'+
+   '<div class="g g2"><div class="f"><label>Tarif de la consultation</label><input id="cPrice" value="'+fmt(n.price)+'" oninput="calcCons()"></div>'+
+   '<div class="f"><label>Total à facturer</label><input id="cTotal" readonly value=""></div></div>'+
+   '<label class="chk"><input type="checkbox" id="cPaid" '+(n.paid?'checked':'')+'>Déjà réglé</label></div>';
+  const f='<button class="b-or" onclick="saveConsult(\''+(c?c.id:'')+'\')">Enregistrer</button>'+
+   (c?'<button onclick="exportReport(\''+c.id+'\')">📄 Rapport</button><button onclick="consToInv(\''+c.id+'\')">🧾 Facturer</button>':'')+
+   '<div style="flex:1"></div>'+(c?'<button class="b-r" onclick="delConsult(\''+c.id+'\')">Supprimer</button>':'');
+  openM((c?'✚ Consultation':'+ Nouvelle consultation'),b,f,880);
+  calcCons();
+}
+function ta(l,id,v,r){return '<div class="f"><label>'+l+'</label><textarea id="'+id+'" rows="'+(r||3)+'">'+esc(v||'')+'</textarea></div>';}
+function cTab(el,id){el.parentElement.querySelectorAll('span').forEach(s=>s.classList.remove('on'));el.classList.add('on');['cf1','cf2','cf3','cf4'].forEach(i=>{const e=document.getElementById(i);if(e)e.style.display=i===id?'':'none';});}
+function consItem(it){
+  return '<div class="row citem" style="margin-bottom:5px;flex-wrap:nowrap"><select class="ci-p" style="flex:1" onchange="ciPrice(this)">'+prodOpts(it?it.pid:'')+'</select>'+
+   '<input class="ci-q" value="'+(it?fmt(it.qty):1)+'" style="width:62px;text-align:center" oninput="calcCons()">'+
+   '<input class="ci-u" value="'+(it?fmt(it.unit):0)+'" style="width:78px;text-align:right" oninput="calcCons()">'+
+   '<button class="b-i b-r" onclick="this.parentElement.remove();calcCons()">✕</button></div>';
+}
+function addConsItem(){document.getElementById('cItems').insertAdjacentHTML('beforeend',consItem(null));}
+function ciPrice(sel){const p=P(sel.value);if(p)sel.parentElement.querySelector('.ci-u').value=fmt(p.sellPrice||p.value);calcCons();}
+function readConsItems(){
+  const a=[];document.querySelectorAll('#cItems .citem').forEach(d=>{
+    const pid=d.querySelector('.ci-p').value,q=num(d.querySelector('.ci-q').value),u=num(d.querySelector('.ci-u').value);
+    if(pid&&q)a.push({pid,qty:q,unit:u});});
+  return a;
+}
+function calcCons(){
+  const e=document.getElementById('cTotal');if(!e)return;
+  const base=num(val('cPrice')),items=readConsItems();
+  const add=chk('cAdd')?items.reduce((a,i)=>a+i.qty*i.unit,0):0;
+  e.value=fmt(base+add)+' '+DB.settings.currency;
+}
+function cartToConsult(){
+  if(!DB.cart.length)return toast('Le panier est vide');
+  DB.cart.forEach(c=>document.getElementById('cItems').insertAdjacentHTML('beforeend',consItem(c)));
+  DB.cart=[];save();renderNav();calcCons();toast('Panier ajouté');
+}
+async function quickPat(){
+  const nm=prompt('Nom du nouveau patient :');if(!nm)return;
+  try{const {data,error}=await SB.from('patients').insert({name:nm.trim(),nickname:'',sex:'',race:'',age:'',job:'',notes:'',dead:false,archived:false,created_by:currentUserId()}).select('id').single();if(error)throw error;await remoteJournal('Patient','Création du dossier '+nm.trim(),0,'patient',data.id);await loadSharedData(false);const sel=document.getElementById('cPat');if(sel)sel.innerHTML=patOpts(data.id);toast('Patient créé')}catch(e){dbErr(e)}
+}
+async function saveConsult(id){
+  const patientId=val('cPat');if(!patientId)return toast('Sélectionnez un patient');
+  const items=readConsItems().map(i=>({product_id:i.pid,qty:i.qty,unit:i.unit}));
+  const payload={patient_id:patientId,practitioner:val('cPra'),ts:new Date(val('cDate')).toISOString(),service:val('cServ'),type:val('cType'),motif:val('cMotif'),symptoms:val('cSym'),observations:val('cObs'),diagnosis:val('cDx'),exams:val('cEx'),injuries:val('cInj'),state:val('cSt'),care:val('cCare'),meds:val('cMeds'),treatment:val('cTr'),reco:val('cReco'),followup:val('cFu'),price:num(val('cPrice')),add_items:chk('cAdd'),paid:chk('cPaid')};
+  try{await rpc('fn_save_consultation',{p_consultation_id:id||null,p_payload:payload,p_items:items});if(payload.practitioner){DB.settings.practitioner=payload.practitioner;save()}closeM();await loadSharedData(true);toast('Consultation enregistrée')}catch(e){dbErr(e)}
+}
+async function delConsult(id){
+  if(!ask('Supprimer cette consultation ? Les produits consommés seront rendus au stock.'))return;
+  try{await rpc('fn_delete_consultation',{p_consultation_id:id});closeM();await loadSharedData(true);toast('Consultation supprimée')}catch(e){dbErr(e)}
+}
+function exportReport(id){
+  const c=DB.consultations.find(x=>x.id===id);if(!c)return;
+  const L1='═══════════════════════════════════════════════════════';
+  const L2='───────────────────────────────────────────────────────';
+  const prods=(c.items||[]).map(i=>'  • '+PN(i.pid)+' ×'+fmt(i.qty)).join('\n');
+  let t=L1+'\n';
+  t+='   RAPPORT D\'INTERVENTION — '+DB.settings.orgName.toUpperCase()+'\n';
+  t+=L1+'\n\n';
+  t+='Patient : '+patName(c.patientId)+'\n';
+  t+='Praticien : '+(c.practitioner||'—')+'\n\n'+L2+'\n\n';
+  t+='**Intervention :**\n'+dt(c.ts)+'\n\n';
+  t+='**Prise en charge :**\n'+(c.service||'[Non renseigné]')+'\n\n';
+  t+='**Motif :**\n'+(c.motif||'[Non renseigné]')+'\n\n';
+  t+='**Rapport d\'intervention :**\n*'+([c.symptoms,c.observations,c.care,c.treatment,c.reco].filter(Boolean).join('\n\n')||'[Non renseigné]')+'*\n\n';
+  t+='**Diagnostic :**\n'+(c.diagnosis||'[Non renseigné]')+'\n\n';
+  t+='**Résultats d\'examens (si réalisé) :**\n'+(c.exams||'[Non renseigné]')+'\n\n';
+  if(prods)t+='**Produits employés :**\n'+prods+'\n\n';
+  t+='**Factures prépayées :**\n'+sp(c.total||c.price)+'\n\n'+L1;
+  dl(t,'Rapport_'+patName(c.patientId).replace(/\s+/g,'_')+'_'+new Date(c.ts).toISOString().slice(0,10)+'.txt');
+  toast('Rapport exporté');
+}
+function dl(text,name,type){
+  const b=new Blob([text],{type:type||'text/plain;charset=utf-8'}),u=URL.createObjectURL(b),a=document.createElement('a');
+  a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);
+}
+async function consToInv(id){
+  const c=DB.consultations.find(x=>x.id===id);if(!c)return;if(c.invoiceId&&DB.invoices.find(i=>i.id===c.invoiceId))return editInv(c.invoiceId);
+  const lines=[{product_id:null,label:(c.type||'Consultation')+(c.motif?' — '+c.motif:''),qty:1,unit:c.price,discount:0}];if(c.addItems)(c.items||[]).forEach(i=>lines.push({product_id:i.pid,label:PN(i.pid),qty:i.qty,unit:i.unit,discount:0}));
+  try{const out=await rpc('fn_save_invoice',{p_invoice_id:null,p_payload:{client:patName(c.patientId),patient_id:c.patientId,org:'',method:'Septims',notes:'Consultation du '+dt(c.ts),status:'À payer',order_id:''},p_lines:lines,p_apply_stock:false,p_stock_already_done:true});const {error}=await SB.from('consultations').update({invoice_id:out.id}).eq('id',id);if(error)throw error;closeM();await loadSharedData(true);toast('Facture '+out.num+' créée');editInv(out.id)}catch(e){dbErr(e)}
+}
+
+/* ═══════════ 12. FACTURES ═══════════ */
+/* ═══════════ 12. FACTURES ═══════════ */
+let invF={q:'',st:'',from:'',to:''};
+function newInv(o){
+  const n=String(DB.settings.nextInv++).padStart(4,'0');
+  const inv=Object.assign({id:uid('i'),num:'F-'+n,ts:Date.now(),client:'',patientId:'',org:'',lines:[],payments:[],method:'Septims',notes:'',status:'À payer',stockDone:false},o||{});
+  if(o&&o.paidAmount)inv.payments.push({id:uid('pay'),amount:num(o.paidAmount),ts:Date.now(),note:'Acompte'});
+  DB.invoices.unshift(inv);return inv;
+}
+function vInv(){
+  document.getElementById('topAct').innerHTML='<button class="b-or" onclick="editInv()">+ Nouvelle facture</button>';
+  let l=DB.invoices.slice();
+  if(invF.q)l=l.filter(i=>(i.num+' '+i.client+' '+i.org+' '+i.notes).toLowerCase().includes(invF.q.toLowerCase()));
+  if(invF.st)l=l.filter(i=>i.status===invF.st);
+  if(invF.from)l=l.filter(i=>i.ts>=new Date(invF.from).getTime());
+  if(invF.to)l=l.filter(i=>i.ts<=new Date(invF.to).getTime()+864e5);
+  const tot=l.filter(i=>i.status!=='Annulé').reduce((a,i)=>a+invTotal(i),0);
+  const du=l.filter(i=>i.status!=='Annulé').reduce((a,i)=>a+invRemain(i),0);
+  let h='<div class="pan pad row" style="margin-bottom:10px">'+
+   '<input id="iq" placeholder="N°, client, note…" value="'+esc(invF.q)+'" style="flex:1;min-width:150px" oninput="invF.q=this.value;vInv();document.getElementById(\'iq\').focus()">'+
+   '<select style="width:150px" onchange="invF.st=this.value;vInv()"><option value="">Tous statuts</option>'+INVST.map(s=>'<option'+(invF.st===s?' selected':'')+'>'+s+'</option>').join('')+'</select>'+
+   '<input type="date" style="width:140px" value="'+invF.from+'" onchange="invF.from=this.value;vInv()">'+
+   '<input type="date" style="width:140px" value="'+invF.to+'" onchange="invF.to=this.value;vInv()">'+
+   '<button class="b-s" onclick="invF={q:\'\',st:\'\',from:\'\',to:\'\'};vInv()">Réinit.</button>'+
+   '<span class="muted small">'+l.length+' · total '+sp(tot)+' · dû '+sp(du)+'</span></div>';
+  h+='<div class="pan"><table><thead><tr><th>N°</th><th>Date</th><th>Client</th><th class="right">Lignes</th><th class="right">Total</th><th class="right">Payé</th><th class="right">Reste</th><th>Statut</th><th></th></tr></thead><tbody>';
+  h+=l.map(i=>{const t=invTotal(i),paid=invPaid(i),rest=invRemain(i);return '<tr class="clk" onclick="editInv(\''+i.id+'\')"><td><b>'+esc(i.num)+'</b></td><td class="small muted">'+dOnly(i.ts)+'</td>'+
+   '<td>'+esc(i.client||'—')+(i.org?'<div class="tiny muted">'+esc(i.org)+'</div>':'')+'</td>'+
+   '<td class="right mono muted">'+i.lines.length+'</td><td class="right mono"><b>'+fmt(t)+'</b></td>'+
+   '<td class="right mono">'+fmt(paid)+'</td><td class="right mono" style="color:'+(rest>0?'var(--jaune)':'var(--tx2)')+'">'+fmt(rest)+'</td>'+
+   '<td>'+invStatusTag(i.status)+'</td>'+
+   '<td class="right"><button class="b-i" onclick="event.stopPropagation();printInv(\''+i.id+'\')">🖨</button></td></tr>';}).join('')||'<tr><td colspan="9" class="empty">Aucune facture</td></tr>';
+  h+='</tbody></table></div>';
+  document.getElementById('view').innerHTML=h;
+}
+function editInv(id){
+  const i=id?DB.invoices.find(x=>x.id===id):null;
+  const n=i||{num:'(à créer)',ts:Date.now(),client:'',patientId:'',org:'',lines:[],payments:[],method:'Septims',notes:'',status:'Brouillon',stockDone:false};
+  let b='<div class="g g2">'+
+   '<div class="f"><label>Client</label><input id="ivC" value="'+esc(n.client)+'"></div>'+
+   '<div class="f"><label>Patient lié (facultatif)</label><select id="ivP" onchange="linkPat()">'+patOpts(n.patientId)+'</select></div>'+
+   '<div class="f"><label>Organisation / personnage</label><input id="ivO" value="'+esc(n.org)+'"></div>'+
+   '<div class="f"><label>Statut</label><select id="ivS" disabled title="Calculé automatiquement selon les paiements">'+opts(INVST,n.status)+'</select></div></div>';
+  b+='<div class="sep"></div><div class="lines" style="margin-bottom:5px"><div class="hd">Article</div><div class="hd right">Qté</div><div class="hd right">P.U.</div><div class="hd right">Remise</div><div class="hd right">Total</div><div></div></div>';
+  b+='<div id="ivLines">'+n.lines.map(l=>invLine(l)).join('')+'</div>';
+  b+='<div class="row" style="margin-top:6px"><button class="b-s" onclick="addInvLine()">+ Ligne stock</button><button class="b-s" onclick="addInvLine(1)">+ Ligne libre</button><button class="b-s" onclick="cartToInv()">🧺 Depuis le panier</button></div>';
+  b+='<div class="sep"></div><div class="f"><label>Moyen de paiement</label><select id="ivM">'+opts(['Septims','Troc','Crédit','Service rendu','Autre'],n.method)+'</select></div>';
+  b+='<div class="f"><label>Notes</label><textarea id="ivN" rows="2">'+esc(n.notes)+'</textarea></div>';
+  b+='<div class="fiche row" style="justify-content:space-between"><b>TOTAL</b><b style="font-size:19px;color:var(--or2)" id="ivTot">0</b></div>'+
+   '<div class="row small muted" style="justify-content:space-between"><span>Payé</span><span id="ivPaid" class="mono"></span></div>'+
+   '<div class="row small muted" style="justify-content:space-between"><span>Reste à payer</span><span id="ivRest" class="mono"></span></div>';
+  if(i){
+    b+='<div class="sep"></div><div class="small muted" style="margin-bottom:6px">Historique des paiements</div>';
+    b+='<div id="ivPayList">'+payList(i)+'</div>';
+    b+='<div class="row" style="margin-top:6px"><input id="ivNewAmt" placeholder="Montant" style="width:100px"><input id="ivNewNote" placeholder="Note (facultatif)" style="flex:1"><button class="b-v" onclick="addPayment(\''+i.id+'\')">+ Ajouter un paiement</button></div>';
+  }
+  if(!i||!i.stockDone)b+='<div class="sep"></div><label class="chk"><input type="checkbox" id="ivStk" checked>Déduire les articles du stock à la validation</label>';
+  const f='<button class="b-or" onclick="saveInv(\''+(i?i.id:'')+'\')">Enregistrer</button>'+
+   (i?'<button onclick="printInv(\''+i.id+'\')">🖨 Imprimer</button><button onclick="dupInv(\''+i.id+'\')">⧉ Dupliquer</button><button onclick="exportInv(\''+i.id+'\')">📄 Export</button><div style="flex:1"></div><button class="b-r" onclick="cancelInv(\''+i.id+'\')">Annuler la facture</button>':'');
+  openM('🧾 Facture '+esc(n.num),b,f,900);
+  calcInv();
+}
+function payList(i){
+  if(!i.payments||!i.payments.length)return '<div class="empty">Aucun paiement enregistré</div>';
+  return '<table><tbody>'+i.payments.slice().sort((a,b)=>b.ts-a.ts).map(p=>'<tr><td class="tiny muted" style="width:130px">'+dt(p.ts)+'</td><td class="right mono" style="width:90px"><b>'+fmt(p.amount)+'</b></td><td class="tiny muted">'+esc(p.note||'')+'</td></tr>').join('')+'</tbody></table>';
+}
+async function addPayment(id){
+  const amt=num(val('ivNewAmt'));if(!amt||amt<=0)return toast('Montant invalide');
+  try{await rpc('fn_add_payment',{p_invoice_id:id,p_amount:amt,p_note:val('ivNewNote')});await loadSharedData(false);toast('Paiement enregistré');editInv(id)}catch(e){dbErr(e)}
+}
+function invLine(l,free){
+  const isFree=free||(l&&!l.pid);
+  return '<div class="lines ivl" style="margin-bottom:5px">'+
+   (isFree?'<input class="il-l" value="'+esc(l?l.label:'')+'" placeholder="Désignation libre">'
+    :'<select class="il-p" onchange="ilPrice(this)">'+prodOpts(l?l.pid:'')+'</select>')+
+   '<input class="il-q" value="'+(l?fmt(l.qty):1)+'" style="text-align:center" oninput="calcInv()">'+
+   '<input class="il-u" value="'+(l?fmt(l.unit):0)+'" style="text-align:right" oninput="calcInv()">'+
+   '<input class="il-d" value="'+(l?fmt(l.discount):0)+'" style="text-align:right" oninput="calcInv()">'+
+   '<input class="il-t" readonly style="text-align:right">'+
+   '<button class="b-i b-r" onclick="this.parentElement.remove();calcInv()">✕</button></div>';
+}
+function addInvLine(free){document.getElementById('ivLines').insertAdjacentHTML('beforeend',invLine(null,free));calcInv();}
+function ilPrice(sel){const p=P(sel.value);if(p)sel.parentElement.querySelector('.il-u').value=fmt(p.sellPrice||p.value);calcInv();}
+function readInvLines(){
+  const a=[];document.querySelectorAll('#ivLines .ivl').forEach(d=>{
+    const ps=d.querySelector('.il-p'),ls=d.querySelector('.il-l');
+    const pid=ps?ps.value:'';const label=ls?ls.value:(pid?PN(pid):'');
+    const q=num(d.querySelector('.il-q').value),u=num(d.querySelector('.il-u').value),di=num(d.querySelector('.il-d').value);
+    if((pid||label)&&q)a.push({pid,label,qty:q,unit:u,discount:di});});
+  return a;
+}
+function calcInv(){
+  let tot=0;
+  document.querySelectorAll('#ivLines .ivl').forEach(d=>{
+    const t=Math.max(0,num(d.querySelector('.il-q').value)*num(d.querySelector('.il-u').value)-num(d.querySelector('.il-d').value));
+    d.querySelector('.il-t').value=fmt(t);tot+=t;});
+  const e=document.getElementById('ivTot');if(!e)return;
+  e.textContent=sp(tot);
+  const pe=document.getElementById('ivPaid');
+  if(pe){
+    const idAttr=document.querySelector('[onclick^="saveInv"]');
+    const m=idAttr&&idAttr.getAttribute('onclick').match(/saveInv\('([^']*)'\)/);
+    const cur=m&&m[1]?DB.invoices.find(x=>x.id===m[1]):null;
+    const paid=cur?invPaid(cur):0;
+    pe.textContent=sp(paid);
+    document.getElementById('ivRest').textContent=sp(Math.max(0,tot-paid));
+  }
+}
+function linkPat(){const p=PAT(val('ivP'));if(p&&!val('ivC'))document.getElementById('ivC').value=p.name;}
+function cartToInv(){
+  if(!DB.cart.length)return toast('Le panier est vide');
+  DB.cart.forEach(c=>document.getElementById('ivLines').insertAdjacentHTML('beforeend',invLine({pid:c.pid,label:PN(c.pid),qty:c.qty,unit:c.unit,discount:0})));
+  DB.cart=[];save();renderNav();calcInv();toast('Panier ajouté');
+}
+async function saveInv(id){
+  const lines=readInvLines();if(!lines.length)return toast('Ajoutez au moins une ligne');const cur=id?DB.invoices.find(x=>x.id===id):null;
+  const payload={client:val('ivC'),patient_id:val('ivP'),org:val('ivO'),method:val('ivM'),notes:val('ivN'),status:(cur&&cur.status!=='Brouillon')?cur.status:'À payer',order_id:cur?cur.orderId||'':''};
+  const rows=lines.map(l=>({product_id:l.pid||null,label:l.label||'',qty:l.qty,unit:l.unit,discount:l.discount||0}));const apply=document.getElementById('ivStk')?chk('ivStk'):(cur?cur.stockDone:true);
+  try{const out=await rpc('fn_save_invoice',{p_invoice_id:id||null,p_payload:payload,p_lines:rows,p_apply_stock:!!apply,p_stock_already_done:false});closeM();await loadSharedData(true);toast('Facture '+out.num+' enregistrée')}catch(e){dbErr(e)}
+}
+async function dupInv(id){
+  const s=DB.invoices.find(x=>x.id===id);if(!s)return;const rows=s.lines.map(l=>({product_id:l.pid||null,label:l.label||'',qty:l.qty,unit:l.unit,discount:l.discount||0}));
+  try{const out=await rpc('fn_save_invoice',{p_invoice_id:null,p_payload:{client:s.client,patient_id:s.patientId||'',org:s.org||'',method:s.method||'Septims',notes:s.notes||'',status:'Brouillon',order_id:''},p_lines:rows,p_apply_stock:false,p_stock_already_done:false});closeM();await loadSharedData(true);toast('Facture '+out.num+' créée');editInv(out.id)}catch(e){dbErr(e)}
+}
+async function cancelInv(id){
+  if(!ask('Annuler cette facture ? Les articles déduits seront rendus au stock lorsque nécessaire.'))return;
+  try{await rpc('fn_cancel_invoice',{p_invoice_id:id});closeM();await loadSharedData(true);toast('Facture annulée')}catch(e){dbErr(e)}
+}
+function invText(i){
+  const L='───────────────────────────────────────────────';
+  let t=DB.settings.orgName.toUpperCase()+'\nFACTURE '+i.num+'\n'+dt(i.ts)+'\n\n';
+  t+='Client : '+(i.client||'—')+'\n'+(i.org?'Organisation : '+i.org+'\n':'')+'\n'+L+'\n';
+  i.lines.forEach(l=>{t+=(l.label||PN(l.pid))+'\n   '+fmt(l.qty)+' × '+fmt(l.unit)+(l.discount?' − '+fmt(l.discount):'')+' = '+sp(lineTotal(l))+'\n';});
+  t+=L+'\nTOTAL : '+sp(invTotal(i))+'\nPayé : '+sp(invPaid(i))+'\nReste : '+sp(invRemain(i))+'\nStatut : '+i.status+'\nPaiement : '+i.method+'\n';
+  if(i.notes)t+='\nNotes : '+i.notes+'\n';
+  return t;
+}
+function exportInv(id){const i=DB.invoices.find(x=>x.id===id);dl(invText(i),i.num+'.txt');toast('Facture exportée');}
+function printInv(id){
+  const i=DB.invoices.find(x=>x.id===id);if(!i)return;
+  document.getElementById('print').innerHTML='<h1>'+esc(DB.settings.orgName)+'</h1>'+
+   '<p class="mt"><b>Facture '+esc(i.num)+'</b> — '+dt(i.ts)+'<br>Client : '+esc(i.client||'—')+(i.org?'<br>'+esc(i.org):'')+'</p>'+
+   '<table><thead><tr><th>Désignation</th><th>Qté</th><th>P.U.</th><th>Remise</th><th>Total</th></tr></thead><tbody>'+
+   i.lines.map(l=>'<tr><td>'+esc(l.label||PN(l.pid))+'</td><td>'+fmt(l.qty)+'</td><td>'+fmt(l.unit)+'</td><td>'+fmt(l.discount)+'</td><td>'+fmt(lineTotal(l))+'</td></tr>').join('')+
+   '</tbody></table><div class="tot">Total : '+sp(invTotal(i))+'</div>'+
+   '<p class="mt">Payé : '+sp(invPaid(i))+' — Reste : '+sp(invRemain(i))+' — '+esc(i.status)+'<br>Paiement : '+esc(i.method)+'</p>'+
+   (i.notes?'<p class="mt">'+esc(i.notes)+'</p>':'')+
+   '<p class="mt" style="margin-top:26px;font-style:italic">Que les Divins vous gardent en bonne santé.</p>';
+  window.print();
+}
+
+/* ═══════════ 13. COMMANDES ═══════════ */
+function vOrders(){
+  document.getElementById('topAct').innerHTML='<button class="b-or" onclick="editOrder()">+ Nouvelle commande</button>';
+  const l=DB.orders.slice().sort((a,b)=>b.ts-a.ts);
+  let h='<div class="pan"><table><thead><tr><th>N°</th><th>Date</th><th>Client</th><th>Produits</th><th class="right">Acompte</th><th class="right">Total</th><th>Souhaitée</th><th>Statut</th><th></th></tr></thead><tbody>';
+  h+=l.map(o=>'<tr class="clk" onclick="editOrder(\''+o.id+'\')"><td><b>'+esc(o.num)+'</b></td><td class="small muted">'+dOnly(o.ts)+'</td>'+
+   '<td>'+esc(o.client||'—')+'</td><td class="small muted">'+o.lines.map(l=>esc(PN(l.pid))+'×'+fmt(l.qty)).join(', ')+'</td>'+
+   '<td class="right mono">'+fmt(o.deposit)+'</td><td class="right mono"><b>'+fmt(ordTotal(o))+'</b></td>'+
+   '<td class="small muted">'+esc(o.wanted||'—')+'</td><td>'+ordStatusTag(o.status)+'</td>'+
+   '<td class="right"><button class="b-i" onclick="event.stopPropagation();ordToInv(\''+o.id+'\')">🧾</button></td></tr>').join('')||'<tr><td colspan="9" class="empty">Aucune commande</td></tr>';
+  h+='</tbody></table></div>';
+  document.getElementById('view').innerHTML=h;
+}
+function ordTotal(o){return (o.lines||[]).reduce((a,l)=>a+num(l.qty)*num(l.unit),0);}
+function editOrder(id){
+  const o=id?DB.orders.find(x=>x.id===id):null;
+  const n=o||{num:'(à créer)',ts:Date.now(),client:'',lines:[],deposit:0,notes:'',wanted:'',status:'Demande',atelierOrders:[]};
+  let b='<div class="g g2"><div class="f"><label>Client</label><input id="orC" value="'+esc(n.client)+'"></div>'+
+   '<div class="f"><label>Statut</label><select id="orS">'+opts(ORDST,n.status)+'</select></div>'+
+   '<div class="f"><label>Date souhaitée</label><input id="orW" value="'+esc(n.wanted)+'" placeholder="ex. avant Tirdas"></div>'+
+   '<div class="f"><label>Acompte versé</label><input id="orD" value="'+fmt(n.deposit)+'" oninput="calcOrd()"></div></div>';
+  b+='<div id="orLines">'+n.lines.map(l=>ordLine(l)).join('')+'</div>'+
+   '<div class="row" style="margin-top:6px"><button class="b-s" onclick="addOrdLine()">+ Produit</button><button class="b-s" onclick="cartToOrd()">🧺 Depuis le panier</button></div>';
+  if(o&&o.lines.length){
+    b+='<div class="sep"></div><div class="small muted" style="margin-bottom:6px">Disponibilité</div><table><tbody>'+
+     o.lines.map(l=>{
+       const dispo=qty(l.pid),manq=Math.max(0,num(l.qty)-dispo),p=P(l.pid);
+       return '<tr><td>'+esc(PN(l.pid))+'</td><td class="right mono muted">demandé '+fmt(l.qty)+'</td>'+
+       '<td class="right mono" style="color:'+(dispo>=l.qty?'var(--vert)':'var(--tx)')+'">stock '+fmt(dispo)+'</td>'+
+       '<td class="right mono" style="color:'+(manq>0?'var(--rouge)':'var(--tx2)')+'">manque '+fmt(manq)+'</td>'+
+       '<td class="right">'+(manq>0&&p&&p.recipe.length?'<button class="b-s" onclick="sendToAtelier(\''+l.pid+'\','+manq+',\''+o.id+'\')">Envoyer le manque</button>':'')+'</td></tr>';
+     }).join('')+'</tbody></table>';
+  }
+  b+='<div class="f" style="margin-top:9px"><label>Notes</label><textarea id="orN" rows="2">'+esc(n.notes)+'</textarea></div>';
+  b+='<div class="fiche row" style="justify-content:space-between"><b>TOTAL</b><b style="color:var(--or2);font-size:17px" id="orTot">0</b></div>';
+  if(o&&o.atelierOrders&&o.atelierOrders.length){
+    b+='<div class="small muted" style="margin-top:8px">Ordres Atelier liés : '+o.atelierOrders.map(aid=>{const a=DB.atelier.find(x=>x.id===aid);return a?'<span class="clk" onclick="closeM();openAtelier(\''+aid+'\')">'+esc(a.num)+' ('+a.status+')</span>':'';}).filter(Boolean).join(', ')+'</div>';
+  }
+  const f='<button class="b-or" onclick="saveOrder(\''+(o?o.id:'')+'\')">Enregistrer</button>'+
+   (o?'<button onclick="promptAcompte(\''+o.id+'\')">+ Acompte</button>'+
+      '<button onclick="setOrdStatus(\''+o.id+'\',\'Prête\')">Marquer prête</button>'+
+      '<button onclick="setOrdStatus(\''+o.id+'\',\'Livrée\')">Marquer livrée</button>'+
+      '<button onclick="ordToInv(\''+o.id+'\')">🧾 Générer une facture</button>'+
+      '<div style="flex:1"></div><button class="b-r" onclick="delOrder(\''+o.id+'\')">Supprimer</button>':'');
+  openM('📜 Commande '+esc(n.num),b,f,780);calcOrd();
+}
+async function promptAcompte(id){
+  const o=DB.orders.find(x=>x.id===id);if(!o)return;const n=num(prompt('Montant de l\'acompte à ajouter :','0'));if(!n||n<=0)return;
+  try{const {error}=await SB.from('orders').update({deposit:num(o.deposit)+n}).eq('id',id);if(error)throw error;await remoteJournal('Commande','Acompte de '+fmt(n)+' sur '+o.num,n,'order',id);await loadSharedData(false);toast('Acompte enregistré');editOrder(id)}catch(e){dbErr(e)}
+}
+async function setOrdStatus(id,st){
+  const o=DB.orders.find(x=>x.id===id);if(!o)return;try{const {error}=await SB.from('orders').update({status:st}).eq('id',id);if(error)throw error;await remoteJournal('Commande',o.num+' → '+st,0,'order',id);await loadSharedData(false);toast('Statut mis à jour');editOrder(id)}catch(e){dbErr(e)}
+}
+function ordLine(l){
+  return '<div class="row orl" style="margin-bottom:5px;flex-wrap:nowrap"><select class="ol-p" style="flex:1" onchange="olPrice(this)">'+prodOpts(l?l.pid:'')+'</select>'+
+   '<input class="ol-q" value="'+(l?fmt(l.qty):1)+'" style="width:64px;text-align:center" oninput="calcOrd()">'+
+   '<input class="ol-u" value="'+(l?fmt(l.unit):0)+'" style="width:82px;text-align:right" oninput="calcOrd()">'+
+   '<button class="b-i b-r" onclick="this.parentElement.remove();calcOrd()">✕</button></div>';
+}
+function addOrdLine(){document.getElementById('orLines').insertAdjacentHTML('beforeend',ordLine(null));}
+function olPrice(s){const p=P(s.value);if(p)s.parentElement.querySelector('.ol-u').value=fmt(p.sellPrice||p.value);calcOrd();}
+function readOrdLines(){const a=[];document.querySelectorAll('#orLines .orl').forEach(d=>{const pid=d.querySelector('.ol-p').value,q=num(d.querySelector('.ol-q').value),u=num(d.querySelector('.ol-u').value);if(pid&&q)a.push({pid,qty:q,unit:u});});return a;}
+function calcOrd(){const e=document.getElementById('orTot');if(!e)return;e.textContent=sp(readOrdLines().reduce((a,l)=>a+l.qty*l.unit,0));}
+function cartToOrd(){if(!DB.cart.length)return toast('Panier vide');DB.cart.forEach(c=>document.getElementById('orLines').insertAdjacentHTML('beforeend',ordLine(c)));DB.cart=[];save();renderNav();calcOrd();}
+async function saveOrder(id){
+  const lines=readOrdLines();if(!lines.length)return toast('Ajoutez au moins un produit');const rows=lines.map(l=>({product_id:l.pid,qty:l.qty,unit:l.unit}));
+  try{const out=await rpc('fn_save_order',{p_order_id:id||null,p_payload:{client:val('orC'),status:val('orS'),wanted:val('orW'),deposit:num(val('orD')),notes:val('orN')},p_lines:rows});closeM();await loadSharedData(true);toast('Commande '+out.num+' enregistrée')}catch(e){dbErr(e)}
+}
+async function delOrder(id){if(!ask('Supprimer cette commande ?'))return;try{await rpc('fn_delete_order',{p_order_id:id});closeM();await loadSharedData(true);toast('Commande supprimée')}catch(e){dbErr(e)}}
+async function ordToInv(id){
+  const o=DB.orders.find(x=>x.id===id);if(!o)return;const rows=o.lines.map(l=>({product_id:l.pid,label:PN(l.pid),qty:l.qty,unit:l.unit,discount:0}));
+  try{const out=await rpc('fn_save_invoice',{p_invoice_id:null,p_payload:{client:o.client,patient_id:'',org:'',method:'Septims',notes:'Commande '+o.num,status:'À payer',order_id:o.id},p_lines:rows,p_apply_stock:true,p_stock_already_done:false});if(num(o.deposit)>0)await rpc('fn_add_payment',{p_invoice_id:out.id,p_amount:num(o.deposit),p_note:'Acompte commande '+o.num});const {error}=await SB.from('orders').update({status:'Livrée'}).eq('id',o.id);if(error)throw error;closeM();await loadSharedData(true);toast('Facture '+out.num+' créée');editInv(out.id)}catch(e){dbErr(e)}
+}
+
+/* ═══════════ 14. ACHATS ═══════════ */
+/* ═══════════ 14. ACHATS ═══════════ */
+function vPurch(){
+  document.getElementById('topAct').innerHTML='<button class="b-or" onclick="editPurch()">+ Nouvel achat</button>';
+  const l=DB.purchases.slice().sort((a,b)=>b.ts-a.ts);
+  const sup={};DB.purchases.forEach(p=>{sup[p.supplier]=(sup[p.supplier]||0)+num(p.total);});
+  let h='<div class="g g2"><div class="pan"><div class="ph">Historique des achats ('+l.length+')</div><table><thead><tr><th>N°</th><th>Date</th><th>Fournisseur</th><th>Lignes</th><th class="right">Total</th></tr></thead><tbody>'+
+   (l.map(p=>'<tr class="clk" onclick="editPurch(\''+p.id+'\')"><td><b>'+esc(p.num)+'</b></td><td class="small muted">'+dOnly(p.ts)+'</td><td>'+esc(p.supplier||'—')+'</td>'+
+   '<td class="small muted">'+p.lines.map(x=>esc(PN(x.pid))+'×'+fmt(x.qty)).join(', ')+'</td><td class="right mono">'+fmt(p.total)+'</td></tr>').join('')||'<tr><td colspan="5" class="empty">Aucun achat</td></tr>')+'</tbody></table></div>';
+  h+='<div class="pan"><div class="ph">Fournisseurs</div>'+(Object.keys(sup).length?'<table><tbody>'+Object.keys(sup).sort((a,b)=>sup[b]-sup[a]).map(s=>'<tr><td>'+esc(s||'—')+'</td><td class="right mono">'+sp(sup[s])+'</td></tr>').join('')+'</tbody></table>':'<div class="empty">—</div>')+'</div></div>';
+  document.getElementById('view').innerHTML=h;
+}
+function editPurch(id){
+  const p=id?DB.purchases.find(x=>x.id===id):null;
+  const n=p||{num:'(à créer)',ts:Date.now(),supplier:'',lines:[],notes:'',total:0,stockDone:false};
+  let b='<div class="f"><label>Fournisseur</label><input id="puS" value="'+esc(n.supplier)+'" list="supL"></div>'+
+   '<datalist id="supL">'+[...new Set(DB.purchases.map(x=>x.supplier).filter(Boolean))].map(s=>'<option>'+esc(s)+'</option>').join('')+'</datalist>';
+  b+='<div id="puLines">'+n.lines.map(l=>purLine(l)).join('')+'</div>'+
+   '<button class="b-s" onclick="addPurLine()" style="margin-top:6px">+ Ingrédient / produit</button>';
+  b+='<div class="f" style="margin-top:9px"><label>Notes</label><textarea id="puN" rows="2">'+esc(n.notes)+'</textarea></div>';
+  b+='<div class="fiche row" style="justify-content:space-between"><b>TOTAL ACHAT</b><b style="color:var(--or2);font-size:17px" id="puTot">0</b></div>'+
+   (p&&p.stockDone?'<div class="small muted">Stock déjà réceptionné.</div>':'<label class="chk"><input type="checkbox" id="puStk" checked>Ajouter au stock à la validation</label>');
+  const f='<button class="b-or" onclick="savePurch(\''+(p?p.id:'')+'\')">Enregistrer</button>'+(p?'<div style="flex:1"></div><button class="b-r" onclick="delPurch(\''+p.id+'\')">Supprimer</button>':'');
+  openM('🛒 Achat '+esc(n.num),b,f,760);calcPur();
+}
+function purLine(l){
+  return '<div class="row pul" style="margin-bottom:5px;flex-wrap:nowrap"><select class="pu-p" style="flex:1" onchange="puPrice(this)">'+prodOpts(l?l.pid:'')+'</select>'+
+   '<input class="pu-q" value="'+(l?fmt(l.qty):1)+'" style="width:70px;text-align:center" oninput="calcPur()">'+
+   '<input class="pu-u" value="'+(l?fmt(l.unit):0)+'" style="width:82px;text-align:right" oninput="calcPur()">'+
+   '<button class="b-i b-r" onclick="this.parentElement.remove();calcPur()">✕</button></div>';
+}
+function addPurLine(){document.getElementById('puLines').insertAdjacentHTML('beforeend',purLine(null));}
+function puPrice(s){const p=P(s.value);if(p)s.parentElement.querySelector('.pu-u').value=fmt(p.buyPrice||p.value);calcPur();}
+function readPurLines(){const a=[];document.querySelectorAll('#puLines .pul').forEach(d=>{const pid=d.querySelector('.pu-p').value,q=num(d.querySelector('.pu-q').value),u=num(d.querySelector('.pu-u').value);if(pid&&q)a.push({pid,qty:q,unit:u});});return a;}
+function calcPur(){const e=document.getElementById('puTot');if(!e)return;e.textContent=sp(readPurLines().reduce((a,l)=>a+l.qty*l.unit,0));}
+async function savePurch(id){
+  const lines=readPurLines();if(!lines.length)return toast('Ajoutez au moins une ligne');const rows=lines.map(l=>({product_id:l.pid,qty:l.qty,unit:l.unit}));const receive=document.getElementById('puStk')?chk('puStk'):(id?!!DB.purchases.find(x=>x.id===id)?.stockDone:false);
+  try{const out=await rpc('fn_save_purchase',{p_purchase_id:id||null,p_payload:{supplier:val('puS'),notes:val('puN')},p_lines:rows,p_receive:!!receive});closeM();await loadSharedData(true);toast('Achat '+out.num+' enregistré')}catch(e){dbErr(e)}
+}
+async function delPurch(id){
+  if(!ask('Supprimer cet achat ? Les quantités réceptionnées seront retirées du stock.'))return;try{await rpc('fn_delete_purchase',{p_purchase_id:id});closeM();await loadSharedData(true);toast('Achat supprimé')}catch(e){dbErr(e)}
+}
+
+/* ═══════════ 15. PANIER ═══════════ */
+/* ═══════════ 15. PANIER ═══════════ */
+function addCart(pid,q){
+  const ex=DB.cart.find(c=>c.pid===pid);
+  const p=P(pid);
+  if(ex)ex.qty+=q||1;else DB.cart.push({pid,qty:q||1,unit:p?(p.sellPrice||p.value):0});
+  save();renderNav();toast(PN(pid)+' ajouté au panier');
+}
+function openCart(){
+  let b=DB.cart.length?'<table><thead><tr><th>Produit</th><th class="right">Qté</th><th class="right">P.U.</th><th class="right">Total</th><th></th></tr></thead><tbody>'+
+   DB.cart.map((c,i)=>'<tr><td>'+esc(PN(c.pid))+'</td>'+
+   '<td class="right"><input value="'+fmt(c.qty)+'" style="width:58px;text-align:center" onchange="DB.cart['+i+'].qty=num(this.value);save();openCart()"></td>'+
+   '<td class="right"><input value="'+fmt(c.unit)+'" style="width:74px;text-align:right" onchange="DB.cart['+i+'].unit=num(this.value);save();openCart()"></td>'+
+   '<td class="right mono">'+fmt(c.qty*c.unit)+'</td>'+
+   '<td class="right"><button class="b-i b-r" onclick="DB.cart.splice('+i+',1);save();openCart();renderNav()">✕</button></td></tr>').join('')+
+   '</tbody></table><div class="fiche row" style="justify-content:space-between;margin-top:9px"><b>TOTAL</b><b style="color:var(--or2)">'+sp(DB.cart.reduce((a,c)=>a+c.qty*c.unit,0))+'</b></div>'+
+   '<div class="sep"></div><div class="small muted" style="margin-bottom:6px">Envoyer le panier vers :</div>'+
+   '<div class="row"><button class="b-or" onclick="cartTo(\'inv\')">🧾 Facture</button><button onclick="cartTo(\'sale\')">💰 Vente directe</button>'+
+   '<button onclick="cartTo(\'consult\')">✚ Consultation</button><button onclick="cartTo(\'order\')">📜 Commande</button></div>'
+   :'<div class="empty">Le panier est vide.<br><span class="small">Ajoutez des produits depuis le stock ou les recettes.</span></div>';
+  openD('🧺 Panier',b,DB.cart.length?'<button class="b-r" onclick="DB.cart=[];save();openCart();renderNav()">Vider</button>':'');
+}
+async function cartTo(dest){
+  if(!DB.cart.length)return;const cart=DB.cart.map(c=>({...c}));const lines=cart.map(c=>({product_id:c.pid,label:PN(c.pid),qty:c.qty,unit:c.unit,discount:0}));closeD();
+  if(dest==='inv'){
+    try{const out=await rpc('fn_save_invoice',{p_invoice_id:null,p_payload:{client:'',patient_id:'',org:'',method:'Septims',notes:'',status:'Brouillon',order_id:''},p_lines:lines,p_apply_stock:false,p_stock_already_done:false});DB.cart=[];save();await loadSharedData(false);editInv(out.id)}catch(e){dbErr(e)}
+  }else if(dest==='order'){
+    try{const out=await rpc('fn_save_order',{p_order_id:null,p_payload:{client:'',status:'Demande',wanted:'',deposit:0,notes:''},p_lines:cart.map(c=>({product_id:c.pid,qty:c.qty,unit:c.unit}))});DB.cart=[];save();await loadSharedData(false);editOrder(out.id)}catch(e){dbErr(e)}
+  }else if(dest==='consult'){
+    editConsult();setTimeout(()=>{const box=document.getElementById('cItems');cart.forEach(c=>box.insertAdjacentHTML('beforeend',consItem(c)));DB.cart=[];save();renderNav();calcCons()},60);
+  }else if(dest==='sale'){
+    try{const total=lines.reduce((a,l)=>a+num(l.qty)*num(l.unit)-num(l.discount),0);const out=await rpc('fn_save_invoice',{p_invoice_id:null,p_payload:{client:'Vente comptoir',patient_id:'',org:'',method:'Septims',notes:'',status:'À payer',order_id:''},p_lines:lines,p_apply_stock:true,p_stock_already_done:false});if(total>0)await rpc('fn_add_payment',{p_invoice_id:out.id,p_amount:total,p_note:'Vente comptoir'});await remoteJournal('Vente','Comptoir — '+cart.map(l=>PN(l.pid)+'×'+fmt(l.qty)).join(', '),total,'invoice',out.id);DB.cart=[];save();await loadSharedData(true);toast('Vente enregistrée ('+out.num+')')}catch(e){dbErr(e)}
+  }
+}
+
+/* ═══════════ 16. JOURNAL ═══════════ */
+/* ═══════════ 16. JOURNAL ═══════════ */
+let jF='',jQ='';
+function vJournal(){
+  document.getElementById('topAct').innerHTML='<button onclick="expJournal()">📄 Exporter</button>';
+  let l=DB.journal.filter(j=>!jF||j.type===jF);
+  if(jQ)l=l.filter(j=>j.text.toLowerCase().includes(jQ.toLowerCase()));
+  l=l.slice(0,400);
+  let h='<div class="pan pad row" style="margin-bottom:10px">'+
+   '<input id="jq" placeholder="Rechercher dans le journal…" value="'+esc(jQ)+'" style="flex:1;min-width:180px" oninput="jQ=this.value;vJournal();document.getElementById(\'jq\').focus()">'+
+   '<select style="width:180px" onchange="jF=this.value;vJournal()"><option value="">Toutes opérations</option>'+JTYPE.map(t=>'<option'+(jF===t?' selected':'')+'>'+t+'</option>').join('')+'</select>'+
+   '<span class="muted small">'+l.length+' entrée(s)</span></div>';
+  h+='<div class="pan"><table><thead><tr><th style="width:130px">Date</th><th style="width:110px">Type</th><th>Opération</th><th class="right">Montant</th></tr></thead><tbody>'+
+   (l.map(j=>'<tr'+(j.refKind?' class="clk" onclick="openRef(\''+j.refKind+'\',\''+j.refId+'\')"':'')+'><td class="small muted">'+dt(j.ts)+'</td><td><span class="tag t-n">'+esc(j.type)+'</span></td><td>'+esc(j.text)+'</td><td class="right mono">'+(j.amount?fmt(j.amount):'')+'</td></tr>').join('')||'<tr><td colspan="4" class="empty">Journal vide</td></tr>')+'</tbody></table></div>';
+  document.getElementById('view').innerHTML=h;
+}
+function expJournal(){
+  dl(DB.journal.map(j=>dt(j.ts)+' | '+j.type+' | '+j.text+(j.amount?' | '+fmt(j.amount):'')).join('\n'),'journal.txt');
+  toast('Journal exporté');
+}
+
+/* ═══════════ 17. STATISTIQUES ═══════════ */
+let sPer=30;
+function treasuryNow(){return num(DB.settings.treasuryInit)+ca()-dep();}
+function situationLabel(v){if(v>0.01)return{t:'Situation positive',c:'var(--vert)'};if(v<-0.01)return{t:'Déficit',c:'var(--rouge)'};return{t:'À l\'équilibre',c:'var(--jaune)'};}
+function financeSeries(days){
+  const now=Date.now();
+  let from;
+  if(!days){
+    const allTs=[].concat(DB.invoices.flatMap(i=>(i.payments||[]).map(p=>p.ts)),DB.purchases.map(p=>p.ts));
+    from=allTs.length?Math.min.apply(null,allTs):now;
+  }else from=now-days*864e5;
+  const buckets={};
+  const dayKey=ts=>new Date(ts).toISOString().slice(0,10);
+  DB.invoices.forEach(i=>(i.payments||[]).forEach(p=>{if(p.ts>=from){const k=dayKey(p.ts);buckets[k]=buckets[k]||{r:0,d:0};buckets[k].r+=num(p.amount);}}));
+  DB.purchases.forEach(p=>{if(p.ts>=from){const k=dayKey(p.ts);buckets[k]=buckets[k]||{r:0,d:0};buckets[k].d+=num(p.total);}});
+  const keys=Object.keys(buckets).sort();
+  let cum=0;
+  return keys.map(k=>{const b=buckets[k];const res=b.r-b.d;cum+=res;return{date:k,r:b.r,d:b.d,res,cum};});
+}
+function renderFinanceSVG(series){
+  if(!series.length)return '<div class="empty">Aucune donnée disponible pour cette période.</div>';
+  const W=680,H=170,pad=24;
+  const maxV=Math.max(1,...series.map(s=>Math.abs(s.cum)));
+  const xx=i=>pad+i*((W-2*pad)/Math.max(1,series.length-1));
+  const yy=v=>H/2-(v/maxV)*(H/2-14);
+  const pts=series.map((s,i)=>xx(i)+','+yy(s.cum)).join(' ');
+  let svg='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:170px">';
+  svg+='<line x1="'+pad+'" y1="'+yy(0)+'" x2="'+(W-pad)+'" y2="'+yy(0)+'" stroke="var(--line2)" stroke-dasharray="4,4"/>';
+  svg+='<polyline fill="none" stroke="var(--or2)" stroke-width="2" points="'+pts+'"/>';
+  series.forEach((s,i)=>{svg+='<circle cx="'+xx(i)+'" cy="'+yy(s.cum)+'" r="3" fill="'+(s.cum>=0?'var(--vert)':'var(--rouge)')+'"/>';});
+  svg+='</svg>';
+  return svg;
+}
+function vStats(){
+  const from=sPer?Date.now()-sPer*864e5:0;
+  const inv=DB.invoices.filter(i=>i.ts>=from&&i.status!=='Annulé'&&i.status!=='Brouillon');
+  const cons=DB.consultations.filter(c=>c.ts>=from);
+  const pur=DB.purchases.filter(p=>p.ts>=from);
+  const revenue=inv.reduce((a,i)=>a+invPaid(i),0), spent=pur.reduce((a,p)=>a+num(p.total),0);
+  const sold={},prod={},used={};
+  inv.forEach(i=>i.lines.filter(l=>l.pid).forEach(l=>sold[l.pid]=(sold[l.pid]||0)+num(l.qty)));
+  DB.movements.filter(m=>m.ts>=from).forEach(m=>{
+    if(m.type==='Production'&&m.qty>0)prod[m.pid]=(prod[m.pid]||0)+m.qty;
+    if((m.type==='Production'||m.type==='Consommation')&&m.qty<0)used[m.pid]=(used[m.pid]||0)-m.qty;
+  });
+  const top=(o,n)=>{const k=Object.keys(o).sort((a,b)=>o[b]-o[a]).slice(0,n);return k.length?'<table><tbody>'+k.map(id=>'<tr class="clk" onclick="openProd(\''+id+'\')"><td>'+esc(PN(id))+'</td><td class="right mono">'+fmt(o[id])+'</td><td style="width:90px"><div class="bar"><i style="width:'+(o[id]/o[k[0]]*100)+'%"></i></div></td></tr>').join('')+'</tbody></table>':'<div class="empty">—</div>';};
+  const kpi=(k,v,d)=>'<div class="kpi"><div class="k">'+k+'</div><div class="v">'+v+'</div><div class="d">'+(d||'')+'</div></div>';
+  let h='<div class="pan pad row" style="margin-bottom:10px">'+[[1,'Aujourd\'hui'],[7,'7 jours'],[30,'30 jours'],[90,'90 jours'],[0,'Tout']]
+   .map(p=>'<button class="'+(sPer===p[0]?'b-or':'')+'" onclick="sPer='+p[0]+';vStats()">'+p[1]+'</button>').join('')+'</div>';
+  const fin=financeSeries(sPer);
+  const totR=fin.reduce((a,s)=>a+s.r,0),totD=fin.reduce((a,s)=>a+s.d,0),resPeriod=totR-totD,treas=treasuryNow(),sit=situationLabel(resPeriod);
+  h+='<div class="pan" style="margin-bottom:12px"><div class="ph">💰 Santé financière<div class="sp"></div><span class="tag" style="border-color:'+sit.c+';color:'+sit.c+'">'+sit.t+'</span></div><div class="pad">'+
+   renderFinanceSVG(fin)+
+   '<div class="g g4" style="margin-top:10px">'+
+    kpi('Recettes encaissées (période)',fmt(totR))+kpi('Dépenses (période)',fmt(totD))+kpi('Résultat (période)',fmt(resPeriod))+kpi('Trésorerie actuelle',fmt(treas))+
+   '</div>'+(treas<0?'<div class="small" style="color:var(--rouge);margin-top:6px">⚠ Trésorerie négative</div>':'')+
+   '<div class="tiny muted" style="margin-top:8px">Valeurs réelles uniquement (paiements et achats) — jamais les valeurs théoriques de Stock ou Tarifs.</div>'+
+   '</div></div>';
+  h+='<div class="g g4" style="margin-bottom:12px">'+kpi('Chiffre d\'affaires',fmt(revenue))+kpi('Dépenses',fmt(spent))+kpi('Bénéfice',fmt(revenue-spent))+
+   kpi('Consultations',cons.length)+kpi('Factures',inv.length)+kpi('Achats',pur.length)+'</div>';
+  h+='<div class="g g2">'+
+   '<div class="pan"><div class="ph">Articles les plus vendus</div>'+top(sold,8)+'</div>'+
+   '<div class="pan"><div class="ph">Produits les plus fabriqués</div>'+top(prod,8)+'</div>'+
+   '<div class="pan"><div class="ph">Ingrédients les plus consommés</div>'+top(used,8)+'</div>'+
+   '<div class="pan"><div class="ph">Produits en alerte</div>'+
+    (()=>{const l=DB.products.filter(p=>!p.archived&&stStatus(p.id)!=='ok');return l.length?'<table><tbody>'+l.slice(0,8).map(p=>'<tr class="clk" onclick="openProd(\''+p.id+'\')"><td>'+esc(p.name)+'</td><td class="right mono">'+fmt(qty(p.id))+'</td><td style="width:90px">'+stateTag(p)+'</td></tr>').join('')+'</tbody></table>':'<div class="empty">Aucun</div>';})()+'</div></div>';
+  document.getElementById('view').innerHTML=h;
+}
+
+/* ═══════════ 18. PARAMETRES / SAUVEGARDES ═══════════ */
+function vSettings(){
+  document.getElementById('topAct').innerHTML='';
+  const s=DB.settings;
+  let h='<div class="fiche" style="margin-bottom:10px;border-color:var(--vert)"><b style="color:var(--vert)">● Base partagée active</b><div class="small muted">Supabase est la source unique. Les modifications des membres sont synchronisées en temps réel.</div></div><div class="g g2"><div class="pan"><div class="ph">⚙ Général</div><div class="pad">'+
+   '<div class="f"><label>Nom de l\'officine</label><input id="stOrg" value="'+esc(s.orgName)+'"></div>'+
+   '<div class="f"><label>Praticien par défaut</label><input id="stPra" value="'+esc(s.practitioner)+'"></div>'+
+   '<div class="g g2"><div class="f"><label>Monnaie</label><input id="stCur" value="'+esc(s.currency)+'"></div>'+
+   '<div class="f"><label>Tarif consultation</label><input id="stCon" value="'+fmt(s.consultPrice)+'"></div></div>'+
+   '<label class="chk"><input type="checkbox" id="stAdd" '+(s.addProductsToConsult?'checked':'')+'>Ajouter par défaut le prix des produits à la consultation</label>'+
+   '<div class="f" style="margin-top:9px"><label>Trésorerie initiale</label><input id="stTres" value="'+fmt(s.treasuryInit||0)+'"></div>'+
+   '<div class="sep"></div><button class="b-or" onclick="saveSettings()">Enregistrer</button></div></div>';
+  h+='<div class="pan"><div class="ph">💾 Sauvegardes</div><div class="pad">'+
+   '<div class="small muted" style="margin-bottom:9px">Les données sont partagées en temps réel via Supabase. L'export crée une copie de sécurité locale du contenu actuellement chargé.</div>'+
+   '<div class="row"><button class="b-or" onclick="exportAll()">⬇ Exporter toutes les données</button>'+
+   '<button disabled title="Import contrôlé uniquement">⬆ Importer une sauvegarde</button>'+
+   '<input type="file" id="impF" accept=".json" style="display:none" onchange="importAll(this)"></div>'+
+   '<div class="sep"></div><div class="small muted">Dernier enregistrement : '+(DB.savedAt?dt(DB.savedAt):'—')+'</div>'+
+   '<div class="small muted">'+DB.products.length+' produits · '+DB.patients.length+' patients · '+DB.consultations.length+' consultations · '+DB.invoices.length+' factures · '+DB.atelier.length+' ordres Atelier · '+DB.movements.length+' mouvements</div>'+
+   '</div></div>';
+  h+='<div class="pan" style="margin-top:10px;border-color:var(--rouge)"><details><summary style="cursor:pointer;padding:8px 12px;font-weight:600;color:var(--rouge);border-bottom:1px solid var(--line)">⚠ Zone dangereuse</summary><div class="pad">'+
+   '<p class="small muted" style="margin-bottom:9px">La réinitialisation depuis le navigateur est désactivée sur la base partagée afin d'éviter une suppression accidentelle des données de tous les membres.</p>'+
+   '<button class="b-or" onclick="exportAll()" style="margin-bottom:9px">⬇ Exporter une sauvegarde avant de continuer</button>'+
+   '<div class="sep"></div><div class="f"><label>Tapez REINITIALISER pour activer le bouton</label><input id="resetConfirm" oninput="document.getElementById(\'resetBtn\').disabled=(this.value!==\'REINITIALISER\')"></div>'+
+   '<button class="b-r" id="resetBtn" disabled onclick="resetAll()">Réinitialiser complètement l\'officine</button>'+
+   '</div></details></div>';
+  h+='<div class="pan" style="margin-top:10px"><div class="ph">🗄 Éléments archivés</div><div class="pad">'+
+   (()=>{const ap=DB.products.filter(p=>p.archived),aq=DB.patients.filter(p=>p.archived);
+     if(!ap.length&&!aq.length)return '<div class="muted small">Aucun élément archivé.</div>';
+     return ap.map(p=>'<div class="row"><span>📦 '+esc(p.name)+' <span class="muted small">('+fmt(qty(p.id))+' en stock)</span></span><button class="b-s" onclick="unarch(\'p\',\''+p.id+'\')">Restaurer</button></div>').join('')+
+       aq.map(p=>'<div class="row"><span>☥ '+esc(p.name)+'</span><button class="b-s" onclick="unarch(\'a\',\''+p.id+'\')">Restaurer</button></div>').join('');})()+'</div></div>';
+  document.getElementById('view').innerHTML=h;
+}
+async function unarch(t,id){
+  try{if(t==='p'){const {error}=await SB.from('products').update({archived:false,updated_by:currentUserId()}).eq('id',id);if(error)throw error}else{const {error}=await SB.from('patients').update({archived:false}).eq('id',id);if(error)throw error}await loadSharedData(true);toast('Restauré')}catch(e){dbErr(e)}
+}
+async function saveSettings(){
+  const practitioner=val('stPra');DB.settings.practitioner=practitioner;save();
+  if(CURRENT_PROFILE.role!=='administrateur'){toast('Praticien enregistré pour votre navigateur. Les paramètres généraux sont réservés à l’administrateur.');return}
+  try{const payload={org_name:val('stOrg'),currency:val('stCur')||'septims',consult_price:num(val('stCon')),add_products_to_consult:chk('stAdd'),treasury_init:num(val('stTres')),price_step:num(DB.settings.priceStep)||.05};const {error}=await SB.from('app_settings').update(payload).eq('id',1);if(error)throw error;await loadSharedData(true);toast('Paramètres partagés enregistrés')}catch(e){dbErr(e)}
+}
+function exportAll(){
+  dl(JSON.stringify(DB,null,1),'officine_sauvegarde_'+new Date().toISOString().slice(0,10)+'.json','application/json');
+  jr('Système','Export de sauvegarde');toast('Sauvegarde exportée');save();
+}
+function importAll(input){toast('Import désactivé sur la base partagée. Utilisez une sauvegarde administrateur contrôlée.');if(input)input.value='';}
+function resetAll(){toast('Réinitialisation locale désactivée : Supabase est la base partagée.');}
+
+/* ═══════════ 19. DEMARRAGE ═══════════ */
+(async function(){
+  const allowed=await authBoot();if(!allowed)return;
+  const st=document.getElementById('saveSt');if(st)st.textContent='chargement…';
+  await loadSharedData(false);
+  if(!DB)return authGate('Erreur de chargement','Impossible de charger la base partagée Supabase.','err','<button class="b-or" onclick="location.reload()">Réessayer</button>');
+  startRealtime();render();
+})();
+window.addEventListener('keydown',e=>{if(e.key==='Escape'){closeM();closeD();}});
+</script>
+</body>
+</html>
